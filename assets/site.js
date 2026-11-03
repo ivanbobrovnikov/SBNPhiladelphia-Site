@@ -46,6 +46,10 @@ const lawFor = k => LAWS[(LOCS[k] || LOCS.philadelphia || {}).law] || LAWS.PA;
 window.SBN_loc = { get: getLoc, law: () => lawFor(getLoc()), lawCode: () => (LOCS[getLoc()] || {}).law || "PA" };
 $$("[data-loc-label]").forEach(el => el.textContent = getLoc() ? LOCS[getLoc()].name : "Choose location");
 $$("[data-pick-loc]").forEach(a => a.addEventListener("click", () => setLoc(a.dataset.pickLoc)));
+/* Services a location offers (all three if unknown). */
+const offers = (k, svc) => !LOCS[k] || !LOCS[k].services || LOCS[k].services.includes(svc);
+// On a location's own page, the booking popup only shows what that shop does.
+if (PAGE_LOC) $$(".m-card[data-go]").forEach(c => { if (!offers(PAGE_LOC, c.dataset.go)) c.remove(); });
 
 /* ---------- header: solid on scroll + mobile menu ---------- */
 const header = $("#header");
@@ -183,8 +187,10 @@ function applySize() {
 function checkout(o) {
   order = { film: "premium", front: 70, rear: 20, loc: getLoc(), ...o };
   const locSel = $("#checkoutForm").location;
-  locSel.innerHTML = `<option value="">Choose a location…</option>` + Object.entries(LOCS).map(([k, L]) => `<option value="${k}">${L.name}${L.status === "open" ? "" : ` (opening ${L.opening || "soon"})`}</option>`).join("");
-  locSel.value = order.loc; $("#coLocField").hidden = !!PAGE_LOC;
+  locSel.innerHTML = `<option value="">Choose a location…</option>` + Object.entries(LOCS).map(([k, L]) => `<option value="${k}"${offers(k, order.service) ? "" : " disabled"}>${L.name}${L.status === "open" ? "" : ` (opening ${L.opening || "soon"})`}${offers(k, order.service) ? "" : " – window tint only"}</option>`).join("");
+  if (!offers(order.loc, order.service)) order.loc = "";
+  $("#coSvcErr").hidden = true;
+  locSel.value = order.loc; $("#coLocField").hidden = !!PAGE_LOC && !!order.loc;
   if (!FILMS[order.film]) order.film = "premium";
   const form = $("#checkoutForm");
   $("#coTitle").textContent = SERVICES[order.service].title;
@@ -221,6 +227,12 @@ if (coForm) {
     const v = state.vehicle;
     $("#coVehErr").hidden = !!v;
     if (!v || !coForm.reportValidity()) return;
+    if (!offers(order.loc, order.service)) {
+      const L = LOCS[order.loc];
+      $("#coSvcErr").textContent = `SBN ${L.name} only does ${L.services.map(x => ({ tint: "window tint", ceramic: "ceramic coating", ppf: "PPF" })[x]).join(", ")} right now. Please pick another location, or call ${L.phone}.`;
+      $("#coSvcErr").hidden = false; $("#coSvcErr").scrollIntoView({ block: "center" });
+      return;
+    }
     try { sessionStorage.setItem("sbn_vehicle", JSON.stringify(v)); } catch (err) {}
     const c = Object.fromEntries(new FormData(coForm));
     const s = orderSummary(order);

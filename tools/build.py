@@ -145,12 +145,12 @@ def where_cards():
         tag = '<span class="tag free">Open</span>' if L["status"] == "open" else f'<span class="tag sale2">Opening {L.get("opening") or "soon"}</span>'
         out += f'''<a class="m-card loc-card-m" href="{{R}}{k}/" data-pick-loc="{k}"><div class="in">
           <div class="row"><div class="m-ic">{ic("i-pin", 18)}</div>{tag}</div>
-          <h5>{L["name"]}</h5><p>{sub}</p><span class="see">Go to this shop {ic("i-arrow", 14)}</span></div></a>'''
+          <h5>{L["name"]}</h5><p>{sub}{" · " + svc_line(L) if svc_line(L) else ""}</p><span class="see">Go to this shop {ic("i-arrow", 14)}</span></div></a>'''
     return out
 
 
 CLIENT_LOCATIONS = json.dumps({k: {"name": L["name"], "short": L["short"], "status": L["status"], "law": L["law"], "opening": L.get("opening"),
-                                   "phone": L["phone"] or MAIN["phone"], "tel": L["tel"] or MAIN["tel"],
+                                   "phone": L["phone"] or MAIN["phone"], "tel": L["tel"] or MAIN["tel"], "services": L.get("services", list(SVC_NAMES)) if "SVC_NAMES" in globals() else L.get("services"),
                                    "calendars": L["calendars"]} for k, L in LOCATIONS.items()}, separators=(",", ":"))
 
 
@@ -277,7 +277,7 @@ def visit_all():
         tag = '<span class="tag free">Open</span>' if L["status"] == "open" else f'<span class="tag sale2">Opening {L.get("opening") or "soon"}</span>'
         cards += f'''<a class="loc-tile reveal" href="{{R}}{k}/" data-pick-loc="{k}">
         <div class="row"><span class="k-label">{L["state_name"]}</span>{tag}</div>
-        <h3 class="h-display">{L["name"]}</h3><p>{addr}</p>
+        <h3 class="h-display">{L["name"]}</h3><p>{addr}{"<br/><b class=blue>" + svc_line(L) + "</b>" if svc_line(L) else ""}</p>
         <span class="go">View location {ic("i-arrow", 16)}</span></a>'''
     return f'''<section id="visit" style="padding-top:2rem">
   <div class="container">
@@ -290,8 +290,30 @@ def visit_all():
 </section>'''
 
 
+SVC_NAMES = {"tint": "Window tint", "ceramic": "Ceramic coating", "ppf": "PPF"}
+
+
+def svc_line(L):
+    """'Window tint only' style label for shops that don't do everything."""
+    sv = L.get("services") or list(SVC_NAMES)
+    return "" if len(sv) == len(SVC_NAMES) else " · ".join(SVC_NAMES[x] for x in sv) + (" only" if len(sv) == 1 else "")
+
+
+def strip_services(T, services):
+    """Remove <!--svc:x-->…<!--/svc:x--> blocks for services not offered, and pick multi/tint-only variants."""
+    for x in SVC_NAMES:
+        keep = x in services
+        T = re.sub(rf"<!--svc:{x}-->(.*?)<!--/svc:{x}-->", (lambda m: m.group(1)) if keep else "", T, flags=re.S)
+    multi = len(services) > 1
+    T = re.sub(r"<!--multi-->(.*?)<!--/multi-->", (lambda m: m.group(1)) if multi else "", T, flags=re.S)
+    T = re.sub(r"<!--tintonly-->(.*?)<!--/tintonly-->", (lambda m: m.group(1)) if services == ["tint"] else "", T, flags=re.S)
+    return T
+
+
 def home_page(k=None):
     T = read("home.html")
+    services = LOCATIONS[k].get("services", list(SVC_NAMES)) if k else list(SVC_NAMES)
+    T = strip_services(T, services).replace("{STUDIO_TOOLS}", ",".join(services))
     if k is None:
         vals = dict(HERO_EYEBROW="Philadelphia · New Jersey · Florida", HERO_WHERE="in Philadelphia, New Jersey and Florida",
                     ABOUT_WHERE="Philly, Jersey and Florida", STAT_WHERE="across our locations",
@@ -300,7 +322,8 @@ def home_page(k=None):
     else:
         L = LOCATIONS[k]
         where = f'{L["city"]}, {L["region"]}' if L["city"] else L["name"]
-        vals = dict(HERO_EYEBROW=f'{L["name"]} · Tint · Ceramic · PPF', HERO_WHERE=f"in {where}",
+        eyebrow = " · ".join(["Tint", "Ceramic", "PPF"][i] for i, x in enumerate(SVC_NAMES) if x in services)
+        vals = dict(HERO_EYEBROW=f'{L["name"]} · {"Ceramic Window Tint" if services == ["tint"] else eyebrow}', HERO_WHERE=f"in {where}",
                     ABOUT_WHERE=L["name"], STAT_WHERE="by the SBN team",
                     PHONE=L["phone"] or MAIN["phone"], TEL=L["tel"] or MAIN["tel"],
                     ADDR_SHORT=loc_addr(L, ", "),

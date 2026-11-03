@@ -1,5 +1,5 @@
 {
-  "_help": "One entry per location; the key is the page address (e.g. /sunrise-fl/). Fill in street/city/zip/phone/hours as you get them, then run: python3 tools/build.py. null = not known yet (the page says 'call for directions' for open shops, or 'opening <opening>' for upcoming ones). status: open or soon. law: PA, NJ or FL (tint rules in the visualizer and checkout). calendars: GoHighLevel booking links; null = the shop calls the customer to schedule instead.",
+  "_help": "One entry per location; the key is the page address (e.g. /sunrise-fl/). Fill in street/city/zip/phone/hours as you get them, then run: python3 tools/build.py. null = not known yet (the page says 'call for directions' for open shops, or 'opening <opening>' for upcoming ones). status: open or soon. law: PA, NJ or FL (tint rules in the visualizer and checkout). calendars: GoHighLevel booking links; null = the shop calls the customer to schedule instead. services: which of tint, ceramic, ppf the shop offers (the page and booking only show those).",
   "philadelphia": {
     "status": "open",
     "name": "Northeast Philadelphia",
@@ -13,13 +13,40 @@
     "city": "Philadelphia",
     "region": "PA",
     "zip": "19115",
-    "hours": [["Mon – Fri", "8:00 AM – 6:00 PM"], ["Saturday", "8:00 AM – 5:00 PM"], ["Sunday", "Closed"]],
+    "hours": [
+      [
+        "Mon – Fri",
+        "8:00 AM – 6:00 PM"
+      ],
+      [
+        "Saturday",
+        "8:00 AM – 5:00 PM"
+      ],
+      [
+        "Sunday",
+        "Closed"
+      ]
+    ],
     "intro": "Minutes from Roosevelt Blvd and a short drive from most of Bucks County. Stop by for a free walkthrough and quote.",
-    "areas": ["Philadelphia", "Northeast Philly", "Bensalem", "Feasterville", "Langhorne", "Warminster", "Levittown", "Huntingdon Valley"],
+    "areas": [
+      "Philadelphia",
+      "Northeast Philly",
+      "Bensalem",
+      "Feasterville",
+      "Langhorne",
+      "Warminster",
+      "Levittown",
+      "Huntingdon Valley"
+    ],
     "calendars": {
       "tint": "https://api.leadconnectorhq.com/widget/booking/uhIOYDDNgCicw61MKhm8",
       "ceramic": "https://api.leadconnectorhq.com/widget/booking/BF04Qi6NL2P9ruo4J4i5"
-    }
+    },
+    "services": [
+      "tint",
+      "ceramic",
+      "ppf"
+    ]
   },
   "west-berlin-nj": {
     "status": "open",
@@ -37,7 +64,15 @@
     "hours": null,
     "intro": "Our South Jersey shop in West Berlin, NJ. Book online and we'll confirm your time, or give us a call.",
     "areas": [],
-    "calendars": { "tint": null, "ceramic": null }
+    "calendars": {
+      "tint": null,
+      "ceramic": null
+    },
+    "services": [
+      "tint",
+      "ceramic",
+      "ppf"
+    ]
   },
   "sunrise-fl": {
     "status": "open",
@@ -55,7 +90,13 @@
     "hours": null,
     "intro": "Our South Florida shop in Sunrise, FL. Book online and we'll confirm your time, or give us a call.",
     "areas": [],
-    "calendars": { "tint": null, "ceramic": null }
+    "calendars": {
+      "tint": null,
+      "ceramic": null
+    },
+    "services": [
+      "tint"
+    ]
   },
   "west-palm-beach-fl": {
     "status": "soon",
@@ -74,6 +115,14 @@
     "hours": null,
     "intro": "Our West Palm Beach shop opens in December. Book ahead and we'll call you to confirm your time.",
     "areas": [],
-    "calendars": { "tint": null, "ceramic": null }
+    "calendars": {
+      "tint": null,
+      "ceramic": null
+    },
+    "services": [
+      "tint",
+      "ceramic",
+      "ppf"
+    ]
   }
 }

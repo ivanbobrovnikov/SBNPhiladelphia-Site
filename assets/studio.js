@@ -213,7 +213,10 @@
 
   /* ---------------------------------------------------------- TABS */
   function tabs(root) {
-    const T = [["tint", "i-eye", "Tint Visualizer"], ["ceramic", "i-sparkles", "Ceramic Before / After"], ["ppf", "i-shield", "PPF Coverage"]];
+    // data-studio-tabs="tint,ceramic,ppf" lists the tools this location offers (empty = all)
+    const only = (root.dataset.studioTabs || "").split(",").filter(Boolean);
+    const T = [["tint", "i-eye", "Tint Visualizer"], ["ceramic", "i-sparkles", "Ceramic Before / After"], ["ppf", "i-shield", "PPF Coverage"]]
+      .filter(([k]) => !only.length || only.includes(k));
     root.innerHTML = `<div class="studio-tabs" role="tablist">${T.map(([k, i, n], j) => `<button class="studio-tab${j ? "" : " active"}" role="tab" data-t="${k}">${ic(i)}${n}</button>`).join("")}</div>
       ${T.map(([k], j) => `<div class="studio-pane${j ? "" : " active"}" data-p="${k}"><div data-studio="${k}"></div></div>`).join("")}`;
     root.querySelectorAll(".studio-tab").forEach(b => b.addEventListener("click", () => show(b.dataset.t)));
