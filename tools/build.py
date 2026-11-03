@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Generates every page of the SBN Auto Styling site into /home/user/sbn-site."""
-import os, re, html
+import os, re, html, urllib.parse
 
 OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PARTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "parts")
 DOMAIN = "https://sbn-autostyling.com"
 read = lambda n: open(os.path.join(PARTS, n)).read()
 SPRITE, MODAL, CHAT = read("sprite.html"), read("modal.html"), read("chat.html")
+import json
+LOCATIONS = {k: v for k, v in json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "locations.json"))).items() if not k.startswith("_")}
+MAIN = LOCATIONS["philadelphia"]  # main phone line, used where a location has no number yet
 IMGS = ["logo.png", "service-ppf.png", "service-ceramic.png", "service-window-tint.png", "about-hero.png"]
 TEL = "tel:+12672637342"
 e = html.escape
@@ -48,11 +51,13 @@ def full_header(is_home):
       <span class="logo-text">SBN <span class="blue">Auto Styling</span></span>
     </a>
     <nav class="nav">{nav}
+      <button class="loc-btn" data-open-modal="where">{ic("i-pin", 14)}<span data-loc-label>Location</span></button>
       <button class="btn btn-primary btn-sm" data-open-modal>Book now</button>
     </nav>
     <button class="burger" id="burger" aria-label="Open menu">{ic("i-menu", 22)}</button>
   </div>
   <div class="mobile-menu" id="mobileMenu">{mob}
+    <button class="loc-btn" data-open-modal="where" style="margin-top:1rem">{ic("i-pin", 14)}<span data-loc-label>Location</span></button>
     <button class="btn btn-primary btn-md" data-open-modal>Book now</button>
   </div>
 </header>'''
@@ -68,7 +73,7 @@ FULL_FOOTER = '''<footer>
     <div class="foot">
       <div>
         <a href="{ROOT}" class="logo"><div class="logo-img"><img src="{R}assets/img/logo.png" alt="SBN"/></div><span class="logo-text" style="display:inline">SBN <span class="blue">Auto Styling</span></span></a>
-        <p>Ceramic window tint, ceramic coating and paint protection film. Trusted by car enthusiasts across Philadelphia &amp; Bucks County.</p>
+        <p>Ceramic window tint, ceramic coating and paint protection film. Philadelphia, New Jersey &amp; Florida.</p>
         <div class="socials">
           <a href="https://www.instagram.com/sbnautostyling" target="_blank" rel="noopener" aria-label="Instagram"><svg width="17" height="17"><use href="#i-insta"/></svg></a>
           <a href="https://www.facebook.com/profile.php?id=61586524292167" target="_blank" rel="noopener" aria-label="Facebook"><svg width="17" height="17"><use href="#i-fb"/></svg></a>
@@ -97,12 +102,9 @@ FULL_FOOTER = '''<footer>
         </ul>
       </div>
       <div>
-        <h4>Contact</h4>
-        <ul>
-          <li><a href="tel:+12672637342">267 263 7342</a></li>
+        <h4>Locations</h4>
+        <ul>{FOOT_LOCATIONS}
           <li><a href="mailto:hello@sbnautostyling.com">hello@sbnautostyling.com</a></li>
-          <li>100 Red Lion Rd, Unit 3<br/>Philadelphia, PA 19115</li>
-          <li>Mon–Fri 8am–6pm · Sat 8am–5pm</li>
         </ul>
       </div>
     </div>
@@ -118,7 +120,64 @@ FULL_FOOTER = '''<footer>
 SLIM_FOOTER = FULL_FOOTER
 
 
-def render(path, title, desc, body, header, footer, auto_modal=False):
+def loc_addr(L, br="<br/>"):
+    """Street address, or a status line when we don't have one yet."""
+    if L["street"]:
+        return f'{L["street"]}{br}{L["city"]}, {L["region"]} {L["zip"]}'
+    if L["status"] != "open":
+        return f'{L["city"]}, {L["region"]}{br}Opening {L.get("opening") or "soon"}'
+    return f'{L["city"]}, {L["region"]}{br}Call for directions'
+
+
+def foot_locations():
+    out = ""
+    for k, L in LOCATIONS.items():
+        addr = loc_addr(L)
+        phone = f'<br/><a href="tel:{L["tel"]}">{L["phone"]}</a>' if L["tel"] else ""
+        out += f'\n          <li><a href="{{R}}{k}/"><b>{L["name"]}</b></a><br/><small>{addr}{phone}</small></li>'
+    return out
+
+
+def where_cards():
+    out = ""
+    for k, L in LOCATIONS.items():
+        sub = f'{L["city"]}, {L["region"]}' if L["city"] else L["state_name"]
+        tag = '<span class="tag free">Open</span>' if L["status"] == "open" else f'<span class="tag sale2">Opening {L.get("opening") or "soon"}</span>'
+        out += f'''<a class="m-card loc-card-m" href="{{R}}{k}/" data-pick-loc="{k}"><div class="in">
+          <div class="row"><div class="m-ic">{ic("i-pin", 18)}</div>{tag}</div>
+          <h5>{L["name"]}</h5><p>{sub}</p><span class="see">Go to this shop {ic("i-arrow", 14)}</span></div></a>'''
+    return out
+
+
+CLIENT_LOCATIONS = json.dumps({k: {"name": L["name"], "short": L["short"], "status": L["status"], "law": L["law"], "opening": L.get("opening"),
+                                   "phone": L["phone"] or MAIN["phone"], "tel": L["tel"] or MAIN["tel"],
+                                   "calendars": L["calendars"]} for k, L in LOCATIONS.items()}, separators=(",", ":"))
+
+
+def local_business_ld(k, L):
+    """schema.org data so Google ties each location page to its Business Profile."""
+    if L["status"] != "open" or not L["street"]:
+        return ""
+    days = {"Mon – Fri": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "Saturday": ["Saturday"], "Sunday": ["Sunday"]}
+    def t24(t):
+        h, rest = t.split(":"); m, ap = rest.split(" ")
+        h = int(h) % 12 + (12 if ap == "PM" else 0)
+        return f"{h:02d}:{m}"
+    hours = []
+    for d, span in L["hours"] or []:
+        if "–" in span and d in days:
+            a, b = [x.strip() for x in span.split("–")]
+            hours.append({"@type": "OpeningHoursSpecification", "dayOfWeek": days[d], "opens": t24(a), "closes": t24(b)})
+    data = {"@context": "https://schema.org", "@type": "AutoRepair", "name": f'SBN Auto Styling – {L["name"]}',
+            "url": f"{DOMAIN}/{k}/", "telephone": L["tel"], "email": L["email"], "image": f"{DOMAIN}/assets/img/logo.png",
+            "address": {"@type": "PostalAddress", "streetAddress": L["street"], "addressLocality": L["city"], "addressRegion": L["region"], "postalCode": L["zip"], "addressCountry": "US"},
+            "openingHoursSpecification": hours, "areaServed": L["areas"], "priceRange": "$$"}
+    return '<script type="application/ld+json">' + json.dumps(data) + "</script>"
+
+
+def render(path, title, desc, body, header, footer, auto_modal=False, location="", head_extra=""):
+    if not location and ("philadelphia" in path or "bucks-county" in path):
+        location = "philadelphia"  # the Philly area landing pages
     depth = path.count("/") + 1 if path else 0
     R = "../" * depth
     root = R or "./"
@@ -141,8 +200,10 @@ def render(path, title, desc, body, header, footer, auto_modal=False):
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="{{R}}assets/site.css" />
 <!-- Tracking: paste your Google Tag Manager snippet here (GTM-N9CVL9ZD) -->
+<script>window.SBN_LOCATIONS={CLIENT_LOCATIONS};</script>
+{head_extra}
 </head>
-<body{' data-auto-modal="1"' if auto_modal else ''}>
+<body{' data-auto-modal="1"' if auto_modal else ''}{f' data-location="{location}"' if location else ''}>
 {SPRITE}
 {header}
 <main>
@@ -157,7 +218,7 @@ def render(path, title, desc, body, header, footer, auto_modal=False):
 </body>
 </html>
 '''
-    doc = doc.replace("{ROOT}", root).replace("{R}", R)
+    doc = doc.replace("{FOOT_LOCATIONS}", foot_locations()).replace("{WHERE_CARDS}", where_cards()).replace("{ROOT}", root).replace("{R}", R)
     d = os.path.join(OUT, path)
     os.makedirs(d, exist_ok=True)
     open(os.path.join(d, "index.html"), "w").write(doc)
@@ -167,10 +228,97 @@ def render(path, title, desc, body, header, footer, auto_modal=False):
 PAGES = []
 
 # ================================================================ HOME
-home_body = read("home.html")
-PAGES.append(render("", "SBN Auto Styling | Philadelphia's Premier Auto Customization",
-                    "SBN Auto Styling — expert vehicle wraps, PPF, window tinting, ceramic coatings, and custom styling in Philadelphia, PA. Call 267 263 7342.",
-                    home_body, full_header(True), FULL_FOOTER, auto_modal=True))
+LAW_FAQ = {'PA': ('What tint percentage is legal in Pennsylvania?', "Front side windows must let in at least 70% of light (70% VLT). Rear side windows and the rear windshield can be any darkness. We always install PA-legal tint, so you'll never fail inspection because of our work."), 'NJ': ('What tint is legal in New Jersey?', "New Jersey doesn't allow aftermarket tint film on the front side windows or the windshield (except a strip at the top). Rear side windows and the rear windshield can be any darkness."), 'FL': ('What tint percentage is legal in Florida?', 'Front side windows must let in at least 28% of light. Rear side windows on cars must let in at least 15%; SUVs, trucks and vans can go as dark as 6% in back. We only install Florida-legal tint.'), 'ALL': ('Is tint legal where I live?', "Each state is different. Pennsylvania requires 70% or lighter on the front side windows, New Jersey doesn't allow film on the front side windows, and Florida allows 28% or lighter up front. Every location only installs tint that's legal in its state.")}
+
+
+def faq_item(q, a):
+    return f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>"
+
+
+def visit_single(k, L):
+    if L["street"]:
+        addr = f'{L["street"]}<br/>{L["city"]}, {L["region"]} {L["zip"]}'
+        q = urllib.parse.quote(f'{L["street"]}, {L["city"]}, {L["region"]} {L["zip"]}')
+        hours = "".join(f"<span>{d}</span><b>{h}</b>" for d, h in L["hours"])
+        right = f'<div class="map reveal d1"><iframe loading="lazy" title="SBN Auto Styling {L["name"]} location" src="https://www.google.com/maps?q={q}&z=13&output=embed"></iframe></div>'
+        btn = f'<a class="btn btn-primary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination={q}">{ic("i-nav", 16)}Get directions</a>'
+        hours_html = f'<div><div class="k-label">Hours</div><div class="hours">{hours}</div></div>'
+    else:
+        addr = loc_addr(L)
+        badge = "Open now" if L["status"] == "open" else f'Opening {L.get("opening") or "soon"}'
+        line = "Call us for the address and today's hours." if L["status"] == "open" else "Book ahead and we'll call you to confirm."
+        right = f'<div class="map soon reveal d1"><div><span class="badge">{badge}</span><h3 class="h-display">SBN {L["name"]}</h3><p>{L["city"]}, {L["state_name"]}. {line}</p></div></div>'
+        btn = f'<a class="btn btn-primary" href="tel:{L["tel"] or MAIN["tel"]}">{ic("i-phone", 16)}Call {L["phone"] or MAIN["phone"]}</a>'
+        hours_html = ""
+    areas = f'<div><div class="k-label">Areas we serve</div><ul class="areas">{"".join(f"<li>{a}</li>" for a in L["areas"])}</ul></div>' if L["areas"] else ""
+    return f'''<section id="visit" style="padding-top:2rem">
+  <div class="container">
+    <div class="sec-head">
+      <div><span class="badge reveal">Visit the {L["name"]} shop</span><h2 class="h-display h2 reveal">Find us.</h2></div>
+      <p class="lead reveal">{L["intro"]}</p>
+    </div>
+    <div class="loc" id="location">
+      <div class="loc-card reveal">
+        <div><div class="k-label">Address</div><div class="val">{addr}</div></div>
+        {hours_html}{areas}
+        <div><div class="k-label">Phone</div><div class="val"><a href="tel:{L["tel"] or MAIN["tel"]}">{L["phone"] or MAIN["phone"]}</a></div></div>
+        {btn}
+      </div>
+      {right}
+    </div>
+  </div>
+</section>'''
+
+
+def visit_all():
+    cards = ""
+    for k, L in LOCATIONS.items():
+        addr = loc_addr(L)
+        tag = '<span class="tag free">Open</span>' if L["status"] == "open" else f'<span class="tag sale2">Opening {L.get("opening") or "soon"}</span>'
+        cards += f'''<a class="loc-tile reveal" href="{{R}}{k}/" data-pick-loc="{k}">
+        <div class="row"><span class="k-label">{L["state_name"]}</span>{tag}</div>
+        <h3 class="h-display">{L["name"]}</h3><p>{addr}</p>
+        <span class="go">View location {ic("i-arrow", 16)}</span></a>'''
+    return f'''<section id="visit" style="padding-top:2rem">
+  <div class="container">
+    <div class="sec-head">
+      <div><span class="badge reveal">Our locations</span><h2 class="h-display h2 reveal">Find your shop.</h2></div>
+      <p class="lead reveal">Same team standards and the same films and coatings at every SBN shop.</p>
+    </div>
+    <div class="loc-grid">{cards}</div>
+  </div>
+</section>'''
+
+
+def home_page(k=None):
+    T = read("home.html")
+    if k is None:
+        vals = dict(HERO_EYEBROW="Philadelphia · New Jersey · Florida", HERO_WHERE="in Philadelphia, New Jersey and Florida",
+                    ABOUT_WHERE="Philly, Jersey and Florida", STAT_WHERE="across our locations",
+                    PHONE=MAIN["phone"], TEL=MAIN["tel"], ADDR_SHORT="Philadelphia · New Jersey · Florida",
+                    LAW_FAQ=faq_item(*LAW_FAQ["ALL"]), VISIT_SECTION=visit_all())
+    else:
+        L = LOCATIONS[k]
+        where = f'{L["city"]}, {L["region"]}' if L["city"] else L["name"]
+        vals = dict(HERO_EYEBROW=f'{L["name"]} · Tint · Ceramic · PPF', HERO_WHERE=f"in {where}",
+                    ABOUT_WHERE=L["name"], STAT_WHERE="by the SBN team",
+                    PHONE=L["phone"] or MAIN["phone"], TEL=L["tel"] or MAIN["tel"],
+                    ADDR_SHORT=loc_addr(L, ", "),
+                    LAW_FAQ=faq_item(*LAW_FAQ[L["law"]]), VISIT_SECTION=visit_single(k, L))
+    for t, v in vals.items():
+        T = T.replace("{" + t + "}", v)
+    return T
+
+
+PAGES.append(render("", "SBN Auto Styling | Window Tint, Ceramic Coating & PPF in Philadelphia, New Jersey & Florida",
+                    "SBN Auto Styling: ceramic window tint, ceramic coating and paint protection film. Locations in Philadelphia, New Jersey and Florida.",
+                    home_page(), full_header(True), FULL_FOOTER, auto_modal=True))
+for k, L in LOCATIONS.items():
+    city = f'{L["city"]}, {L["region"]}'
+    PAGES.append(render(k, f'SBN Auto Styling {L["name"]} | Window Tint, Ceramic Coating & PPF in {city}',
+                        f'Ceramic window tint, ceramic coating and paint protection film at SBN Auto Styling in {city}.'
+                        + (f' {L["street"]}. Call {L["phone"]}.' if L["street"] else (" Now open." if L["status"] == "open" else f' Opening {L.get("opening") or "soon"}.')),
+                        home_page(k), full_header(True), FULL_FOOTER, auto_modal=True, location=k, head_extra=local_business_ld(k, L)))
 
 # ================================================================ SERVICE PAGES
 PERKS = [("i-cal", "Fast Scheduling", "Same-week appointments available for most services. Quick turnaround without cutting corners."),

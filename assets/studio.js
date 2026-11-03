@@ -17,6 +17,7 @@
   const PRICES = window.SBN_PRICES, FILMS = PRICES.tint;
   const price = (k, size, ws) => window.SBN_tintPrice(k, size, ws);
   const irTxt = f => f.irTxt || f.ir + "%";
+  const lawName = () => window.SBN_loc.lawCode();
 
   /* Vehicle block shared by the tint and PPF tools: Year/Make/Model + "preview as" body style chips. */
   function vehicleBlock(root, onStyle) {
@@ -50,7 +51,7 @@
       </div>
       <div class="panel">
         ${vehicleHTML()}
-        <div><div class="ctl-label">Front windows <details class="law"><summary>ⓘ PA tint law</summary><p>Pennsylvania inspection requires front side windows to let in at least 70% of light, so we install 70% up front. Rear windows can be any darkness.</p></details></div><div class="vlt" data-c="front">
+        <div><div class="ctl-label">Front windows <details class="law"><summary>ⓘ ${lawName()} tint law</summary><p>${window.SBN_loc.law().note}</p></details></div><div class="vlt" data-c="front">
           ${VLTS.map(v => `<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}</div></div>
         <div><div class="ctl-label">Rear windows <em>VLT %</em></div><div class="vlt" data-c="rear">
           ${VLTS.map(v => `<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}</div></div>

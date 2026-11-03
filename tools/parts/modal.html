@@ -5,6 +5,14 @@
     <div class="bar"></div>
     <button class="m-close" data-close-modal aria-label="Close"><svg width="16" height="16"><use href="#i-x"/></svg></button>
     <div class="m-body">
+      <!-- step: choose location (first visit to the main homepage, and the location switcher) -->
+      <div class="m-step" data-step="where">
+        <div class="m-head"><div class="m-logo"><img src="/logo.png" alt="SBN"/></div><div><div class="m-kicker">SBN Auto Styling</div><div class="m-title">Which location are you visiting?</div></div></div>
+        <p class="m-sub">We'll show you that shop's address, hours and booking.</p>
+        <div class="m-grid">{WHERE_CARDS}</div>
+        <p class="m-foot" style="margin-top:1rem"><button class="link-btn" data-close-modal>Just browsing</button></p>
+      </div>
+
       <!-- step: choose service -->
       <div class="m-step active" data-step="pick">
         <div class="m-head"><div class="m-logo"><img src="/logo.png" alt="SBN"/></div><div><div class="m-kicker">SBN Auto Styling</div><div class="m-title" id="mTitle">What can we help you with?</div></div></div>
@@ -92,6 +100,7 @@
         <div class="m-head"><button class="m-back" data-go="pick" aria-label="Back"><svg width="14" height="14"><use href="#i-chevl"/></svg></button><div><div class="m-kicker">Checkout · Step 1 of 2</div><div class="m-title" id="coTitle">Your appointment</div></div></div>
         <form id="checkoutForm" class="co" novalidate>
           <div class="co-sum" id="coSummary"></div>
+          <div class="field" id="coLocField"><label>Location <span>*</span></label><select name="location" required></select></div>
           <div class="field"><label>Your vehicle <span>*</span></label><div id="coVehicle"></div><p class="co-err" id="coVehErr" hidden>Pick your year, make and model.</p></div>
           <div class="co-tint" id="coTint" hidden>
             <div class="field"><label>Film <em id="coSize"></em></label><select name="film"></select></div>
@@ -128,9 +137,9 @@
       <div class="m-step" data-step="done">
         <div class="co-done">
           <div class="co-check"><svg width="28" height="28"><use href="#i-check"/></svg></div>
-          <div class="m-title">Estimate requested</div>
+          <div class="m-title" id="doneTitle">Estimate requested</div>
           <p id="doneText">We'll call you within 1 business day to set up your free in-person PPF estimate.</p>
-          <a class="btn btn-outline" href="tel:+12672637342"><svg width="16" height="16"><use href="#i-phone"/></svg>Need us sooner? 267 263 7342</a>
+          <a class="btn btn-outline" id="doneCall" href="tel:+12672637342"><svg width="16" height="16"><use href="#i-phone"/></svg><span>Need us sooner? 267 263 7342</span></a>
         </div>
       </div>
 

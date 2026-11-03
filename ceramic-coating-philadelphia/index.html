@@ -16,8 +16,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/site.css" />
 <!-- Tracking: paste your Google Tag Manager snippet here (GTM-N9CVL9ZD) -->
+<script>window.SBN_LOCATIONS={"philadelphia":{"name":"Northeast Philadelphia","short":"Philly","status":"open","law":"PA","opening":null,"phone":"267 263 7342","tel":"+12672637342","calendars":{"tint":"https://api.leadconnectorhq.com/widget/booking/uhIOYDDNgCicw61MKhm8","ceramic":"https://api.leadconnectorhq.com/widget/booking/BF04Qi6NL2P9ruo4J4i5"}},"west-berlin-nj":{"name":"West Berlin","short":"West Berlin","status":"open","law":"NJ","opening":null,"phone":"267 263 7342","tel":"+12672637342","calendars":{"tint":null,"ceramic":null}},"sunrise-fl":{"name":"Sunrise","short":"Sunrise","status":"open","law":"FL","opening":null,"phone":"267 263 7342","tel":"+12672637342","calendars":{"tint":null,"ceramic":null}},"west-palm-beach-fl":{"name":"West Palm Beach","short":"West Palm","status":"soon","law":"FL","opening":"December","phone":"267 263 7342","tel":"+12672637342","calendars":{"tint":null,"ceramic":null}}};</script>
+
 </head>
-<body>
+<body data-location="philadelphia">
 <svg width="0" height="0" style="position:absolute">
   <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
   <symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.13-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5A2 2 0 0 0 15.5 9.94l6.13 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.13a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></symbol>
@@ -50,11 +52,13 @@
       <span class="logo-text">SBN <span class="blue">Auto Styling</span></span>
     </a>
     <nav class="nav"><a href="../#studio">Studio</a><a href="../#services">Services</a><a href="../#pricing">Pricing</a><a href="../#gallery">Work</a><a href="../#testimonials">Reviews</a><a href="../#visit">Visit</a><a href="../blog/">Blog</a>
+      <button class="loc-btn" data-open-modal="where"><svg width="14" height="14"><use href="#i-pin"/></svg><span data-loc-label>Location</span></button>
       <button class="btn btn-primary btn-sm" data-open-modal>Book now</button>
     </nav>
     <button class="burger" id="burger" aria-label="Open menu"><svg width="22" height="22"><use href="#i-menu"/></svg></button>
   </div>
   <div class="mobile-menu" id="mobileMenu"><a class="link" href="../#studio">Studio</a><a class="link" href="../#services">Services</a><a class="link" href="../#pricing">Pricing</a><a class="link" href="../#gallery">Work</a><a class="link" href="../#testimonials">Reviews</a><a class="link" href="../#visit">Visit</a><a class="link" href="../blog/">Blog</a>
+    <button class="loc-btn" data-open-modal="where" style="margin-top:1rem"><svg width="14" height="14"><use href="#i-pin"/></svg><span data-loc-label>Location</span></button>
     <button class="btn btn-primary btn-md" data-open-modal>Book now</button>
   </div>
 </header>
@@ -77,7 +81,7 @@
     <div class="foot">
       <div>
         <a href="../" class="logo"><div class="logo-img"><img src="../assets/img/logo.png" alt="SBN"/></div><span class="logo-text" style="display:inline">SBN <span class="blue">Auto Styling</span></span></a>
-        <p>Ceramic window tint, ceramic coating and paint protection film. Trusted by car enthusiasts across Philadelphia &amp; Bucks County.</p>
+        <p>Ceramic window tint, ceramic coating and paint protection film. Philadelphia, New Jersey &amp; Florida.</p>
         <div class="socials">
           <a href="https://www.instagram.com/sbnautostyling" target="_blank" rel="noopener" aria-label="Instagram"><svg width="17" height="17"><use href="#i-insta"/></svg></a>
           <a href="https://www.facebook.com/profile.php?id=61586524292167" target="_blank" rel="noopener" aria-label="Facebook"><svg width="17" height="17"><use href="#i-fb"/></svg></a>
@@ -106,12 +110,13 @@
         </ul>
       </div>
       <div>
-        <h4>Contact</h4>
+        <h4>Locations</h4>
         <ul>
-          <li><a href="tel:+12672637342">267 263 7342</a></li>
+          <li><a href="../philadelphia/"><b>Northeast Philadelphia</b></a><br/><small>100 Red Lion Road, Unit 3<br/>Philadelphia, PA 19115<br/><a href="tel:+12672637342">267 263 7342</a></small></li>
+          <li><a href="../west-berlin-nj/"><b>West Berlin</b></a><br/><small>West Berlin, NJ<br/>Call for directions</small></li>
+          <li><a href="../sunrise-fl/"><b>Sunrise</b></a><br/><small>Sunrise, FL<br/>Call for directions</small></li>
+          <li><a href="../west-palm-beach-fl/"><b>West Palm Beach</b></a><br/><small>West Palm Beach, FL<br/>Opening December</small></li>
           <li><a href="mailto:hello@sbnautostyling.com">hello@sbnautostyling.com</a></li>
-          <li>100 Red Lion Rd, Unit 3<br/>Philadelphia, PA 19115</li>
-          <li>Mon–Fri 8am–6pm · Sat 8am–5pm</li>
         </ul>
       </div>
     </div>
@@ -130,6 +135,22 @@
     <div class="bar"></div>
     <button class="m-close" data-close-modal aria-label="Close"><svg width="16" height="16"><use href="#i-x"/></svg></button>
     <div class="m-body">
+      <!-- step: choose location (first visit to the main homepage, and the location switcher) -->
+      <div class="m-step" data-step="where">
+        <div class="m-head"><div class="m-logo"><img src="../assets/img/logo.png" alt="SBN"/></div><div><div class="m-kicker">SBN Auto Styling</div><div class="m-title">Which location are you visiting?</div></div></div>
+        <p class="m-sub">We'll show you that shop's address, hours and booking.</p>
+        <div class="m-grid"><a class="m-card loc-card-m" href="../philadelphia/" data-pick-loc="philadelphia"><div class="in">
+          <div class="row"><div class="m-ic"><svg width="18" height="18"><use href="#i-pin"/></svg></div><span class="tag free">Open</span></div>
+          <h5>Northeast Philadelphia</h5><p>Philadelphia, PA</p><span class="see">Go to this shop <svg width="14" height="14"><use href="#i-arrow"/></svg></span></div></a><a class="m-card loc-card-m" href="../west-berlin-nj/" data-pick-loc="west-berlin-nj"><div class="in">
+          <div class="row"><div class="m-ic"><svg width="18" height="18"><use href="#i-pin"/></svg></div><span class="tag free">Open</span></div>
+          <h5>West Berlin</h5><p>West Berlin, NJ</p><span class="see">Go to this shop <svg width="14" height="14"><use href="#i-arrow"/></svg></span></div></a><a class="m-card loc-card-m" href="../sunrise-fl/" data-pick-loc="sunrise-fl"><div class="in">
+          <div class="row"><div class="m-ic"><svg width="18" height="18"><use href="#i-pin"/></svg></div><span class="tag free">Open</span></div>
+          <h5>Sunrise</h5><p>Sunrise, FL</p><span class="see">Go to this shop <svg width="14" height="14"><use href="#i-arrow"/></svg></span></div></a><a class="m-card loc-card-m" href="../west-palm-beach-fl/" data-pick-loc="west-palm-beach-fl"><div class="in">
+          <div class="row"><div class="m-ic"><svg width="18" height="18"><use href="#i-pin"/></svg></div><span class="tag sale2">Opening December</span></div>
+          <h5>West Palm Beach</h5><p>West Palm Beach, FL</p><span class="see">Go to this shop <svg width="14" height="14"><use href="#i-arrow"/></svg></span></div></a></div>
+        <p class="m-foot" style="margin-top:1rem"><button class="link-btn" data-close-modal>Just browsing</button></p>
+      </div>
+
       <!-- step: choose service -->
       <div class="m-step active" data-step="pick">
         <div class="m-head"><div class="m-logo"><img src="../assets/img/logo.png" alt="SBN"/></div><div><div class="m-kicker">SBN Auto Styling</div><div class="m-title" id="mTitle">What can we help you with?</div></div></div>
@@ -217,6 +238,7 @@
         <div class="m-head"><button class="m-back" data-go="pick" aria-label="Back"><svg width="14" height="14"><use href="#i-chevl"/></svg></button><div><div class="m-kicker">Checkout · Step 1 of 2</div><div class="m-title" id="coTitle">Your appointment</div></div></div>
         <form id="checkoutForm" class="co" novalidate>
           <div class="co-sum" id="coSummary"></div>
+          <div class="field" id="coLocField"><label>Location <span>*</span></label><select name="location" required></select></div>
           <div class="field"><label>Your vehicle <span>*</span></label><div id="coVehicle"></div><p class="co-err" id="coVehErr" hidden>Pick your year, make and model.</p></div>
           <div class="co-tint" id="coTint" hidden>
             <div class="field"><label>Film <em id="coSize"></em></label><select name="film"></select></div>
@@ -253,9 +275,9 @@
       <div class="m-step" data-step="done">
         <div class="co-done">
           <div class="co-check"><svg width="28" height="28"><use href="#i-check"/></svg></div>
-          <div class="m-title">Estimate requested</div>
+          <div class="m-title" id="doneTitle">Estimate requested</div>
           <p id="doneText">We'll call you within 1 business day to set up your free in-person PPF estimate.</p>
-          <a class="btn btn-outline" href="tel:+12672637342"><svg width="16" height="16"><use href="#i-phone"/></svg>Need us sooner? 267 263 7342</a>
+          <a class="btn btn-outline" id="doneCall" href="tel:+12672637342"><svg width="16" height="16"><use href="#i-phone"/></svg><span>Need us sooner? 267 263 7342</span></a>
         </div>
       </div>
 

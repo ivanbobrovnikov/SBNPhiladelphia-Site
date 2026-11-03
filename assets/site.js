@@ -3,11 +3,15 @@
    ========================================================= */
 
 /* ---------- config: edit these ---------- */
-// GoHighLevel booking calendars (Calendars → your calendar → Share → booking link).
-// Turn on payments in each calendar's settings to collect the deposit.
-const BOOKING = {
-  ceramic: { title: "Book Ceramic Coating", url: "https://api.leadconnectorhq.com/widget/booking/BF04Qi6NL2P9ruo4J4i5" },
-  tint:    { title: "Book Window Tinting",  url: "https://api.leadconnectorhq.com/widget/booking/uhIOYDDNgCicw61MKhm8" }
+// Locations (address, phone, GoHighLevel booking calendars) live in tools/locations.json and are
+// injected into every page as window.SBN_LOCATIONS by tools/build.py.
+// Turn on payments in each GoHighLevel calendar's settings to collect the deposit.
+const LOCS = window.SBN_LOCATIONS || {};
+// State tint laws. front/rear: the darkest film (VLT %) we install; null = no film allowed on the front sides.
+const LAWS = {
+  PA: { front: 70, note: "Pennsylvania inspection requires front side windows to let in at least 70% of light, so we install 70% up front. Rear windows can be any darkness." },
+  NJ: { front: null, note: "New Jersey doesn't allow tint film on the front side windows, so front tint is preview only. Rear windows can be any darkness." },
+  FL: { front: 35, rearCar: 15, note: "Florida allows 28% or lighter on the front side windows (we install 35%, the closest film shade) and 15% or lighter on the rear windows of cars. SUVs, trucks and vans can go darker in back." },
 };
 // GoHighLevel inbound webhook (Automation → Workflow → trigger "Inbound Webhook" → copy URL).
 // Every checkout and estimate request is posted here with the vehicle, service, film and tint %.
@@ -29,6 +33,19 @@ const LEAD_EMAIL = "hello@sbnautostyling.com";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+/* ---------- location: the page's own location, else the visitor's saved choice ---------- */
+const PAGE_LOC = document.body.dataset.location || "";
+function getLoc() {
+  if (PAGE_LOC) return PAGE_LOC;
+  try { const v = localStorage.getItem("sbn_location"); return LOCS[v] ? v : ""; } catch (e) { return ""; }
+}
+function setLoc(k) { try { localStorage.setItem("sbn_location", k); } catch (e) {} }
+if (PAGE_LOC) setLoc(PAGE_LOC);
+const lawFor = k => LAWS[(LOCS[k] || LOCS.philadelphia || {}).law] || LAWS.PA;
+window.SBN_loc = { get: getLoc, law: () => lawFor(getLoc()), lawCode: () => (LOCS[getLoc()] || {}).law || "PA" };
+$$("[data-loc-label]").forEach(el => el.textContent = getLoc() ? LOCS[getLoc()].name : "Choose location");
+$$("[data-pick-loc]").forEach(a => a.addEventListener("click", () => setLoc(a.dataset.pickLoc)));
 
 /* ---------- header: solid on scroll + mobile menu ---------- */
 const header = $("#header");
@@ -124,7 +141,7 @@ window.SBN_tintPrice = tintPrice;
 const SIZES = { std: "Coupe / sedan / small SUV", large: "Large SUV / truck" };
 const SERVICES = {
   tint: { title: "Window Tinting", next: "Next: pick a time and pay your deposit." },
-  ceramic: { title: "Ceramic Coating", next: "Next: pick a time and pay your deposit. Want extra services? Call 267 263 7342." },
+  ceramic: { title: "Ceramic Coating", next: "Next: pick a time and pay your deposit. Want extra services? Give us a call." },
   ppf: { title: "Paint Protection Film", next: "We'll call you to set up your free in-person estimate." },
 };
 const state = window.SBNState = window.SBNState || { vehicle: null };
@@ -133,15 +150,26 @@ let order = null;
 
 function orderSummary(o) {
   if (o.service === "tint") {
-    const f = FILMS[o.film], installed = Math.max(o.front, 70);
-    return { lines: [`${f.name} film (${f.irTxt || f.ir + "%"} IR rejection, ${f.warranty}) · sides & rear${o.windshield ? " + windshield" : ""}`, `Front ${o.front}% · Rear ${o.rear}%`, SIZES[o.size] + (o.size === "large" ? ` (+$${PRICES.LARGE_EXTRA})` : "") + (o.windshield ? ` · windshield +$${PRICES.windshield[o.film]}` : "")], price: tintPrice(o.film, o.size, o.windshield), installed };
+    const f = FILMS[o.film], law = lawFor(o.loc), car = !(state.vehicle && /suv|truck/.test(state.vehicle.style));
+    const installed = law.front === null ? "none" : Math.max(o.front, law.front);
+    const rearInstalled = law.rearCar && car ? Math.max(o.rear, law.rearCar) : o.rear;
+    return { lines: [`${f.name} film (${f.irTxt || f.ir + "%"} IR rejection, ${f.warranty}) · sides & rear${o.windshield ? " + windshield" : ""}`, `Front ${o.front}% · Rear ${o.rear}%`, SIZES[o.size] + (o.size === "large" ? ` (+$${PRICES.LARGE_EXTRA})` : "") + (o.windshield ? ` · windshield +$${PRICES.windshield[o.film]}` : "")], price: tintPrice(o.film, o.size, o.windshield), installed, rearInstalled };
   }
   if (o.service === "ceramic") return { lines: ["Wash, iron decon, clay bar, paint enhancement, ceramic coating", `Sale price (regularly $${PRICES.ceramicWas.toLocaleString()}) · about 8–10 hours`], price: "$" + PRICES.ceramic };
   return { lines: [(o.pkg || "PPF coverage to be decided") + " · free in-person estimate", "20–30 minutes at our shop"], price: "Free" };
 }
 function renderSummary(el) {
-  const s = orderSummary(order), v = state.vehicle;
-  el.innerHTML = `<div><b>${SERVICES[order.service].title}</b>${s.lines.map(l => `<small>${l}</small>`).join("")}${v ? `<small>Vehicle: ${v.label}</small>` : ""}</div><span>${s.price}</span>`;
+  const s = orderSummary(order), v = state.vehicle, L = LOCS[order.loc];
+  el.innerHTML = `<div><b>${SERVICES[order.service].title}${L ? ` · SBN ${L.name}` : ""}</b>${s.lines.map(l => `<small>${l}</small>`).join("")}${v ? `<small>Vehicle: ${v.label}</small>` : ""}</div><span>${s.price}</span>`;
+}
+/* The small legal line above the checkout button, only when their pick won't be installed as-is. */
+function updateLegal() {
+  if (order.service !== "tint") return ($("#coLegal").hidden = true);
+  const s = orderSummary(order), law = lawFor(order.loc);
+  const changed = s.installed !== order.front || s.rearInstalled !== order.rear;
+  $("#coLegal").hidden = !changed;
+  if (changed) $("#coLegal").textContent = law.front === null ? "Front side windows aren't tinted in New Jersey (state law); rear windows as selected."
+    : `Installed at front ${s.installed}% · rear ${s.rearInstalled}% to meet ${{ FL: "Florida", NJ: "New Jersey" }[(LOCS[order.loc] || {}).law] || "Pennsylvania"} law.`;
 }
 
 function updateWsLabel() { const el = $("#coWsPrice"); if (el && order) el.textContent = "+$" + PRICES.windshield[order.film]; }
@@ -153,7 +181,10 @@ function applySize() {
   $("#coSize").textContent = !state.vehicle ? "" : order.size === "large" ? `(priced as large SUV / truck, +$${PRICES.LARGE_EXTRA})` : "(priced as car / small SUV)";
 }
 function checkout(o) {
-  order = { film: "premium", front: 70, rear: 20, ...o };
+  order = { film: "premium", front: 70, rear: 20, loc: getLoc(), ...o };
+  const locSel = $("#checkoutForm").location;
+  locSel.innerHTML = `<option value="">Choose a location…</option>` + Object.entries(LOCS).map(([k, L]) => `<option value="${k}">${L.name}${L.status === "open" ? "" : ` (opening ${L.opening || "soon"})`}</option>`).join("");
+  locSel.value = order.loc; $("#coLocField").hidden = !!PAGE_LOC;
   if (!FILMS[order.film]) order.film = "premium";
   const form = $("#checkoutForm");
   $("#coTitle").textContent = SERVICES[order.service].title;
@@ -164,10 +195,10 @@ function checkout(o) {
   form.film.value = order.film; form.front.value = order.front; form.rear.value = order.rear;
   form.windshield.checked = !!order.windshield; updateWsLabel();
   applySize();
-  $("#coLegal").hidden = order.front >= 70;
+  updateLegal();
   if (window.SBNVehicles) SBNVehicles.mount($("#coVehicle"), v => {
     state.vehicle = v; $("#coVehErr").hidden = true;
-    applySize();
+    applySize(); updateLegal();
     renderSummary($("#coSummary"));
   }, state.vehicle || {});
   renderSummary($("#coSummary"));
@@ -178,10 +209,11 @@ if (coForm) {
   coForm.addEventListener("change", e => {
     const k = e.target.name;
     if (k === "windshield") { order.windshield = e.target.checked; return renderSummary($("#coSummary")); }
+    if (k === "location") { order.loc = e.target.value; if (order.loc) setLoc(order.loc); updateLegal(); return renderSummary($("#coSummary")); }
     if (!["film", "front", "rear"].includes(k)) return;
     order[k] = k === "film" ? e.target.value : +e.target.value;
     if (k === "film") updateWsLabel();
-    $("#coLegal").hidden = order.front >= 70;
+    updateLegal();
     renderSummary($("#coSummary"));
   });
   coForm.addEventListener("submit", e => {
@@ -200,19 +232,28 @@ if (coForm) {
       vehicle_size: order.service === "tint" ? SIZES[order.size] : "",
       windshield: order.service === "tint" ? (order.windshield ? "yes" : "no") : "",
       tint_front_requested: order.service === "tint" ? order.front + "%" : "",
-      tint_front_install: order.service === "tint" ? s.installed + "%" : "",
+      tint_front_install: order.service === "tint" ? (s.installed === "none" ? "none (NJ law)" : s.installed + "%") : "",
       tint_rear: order.service === "tint" ? order.rear + "%" : "",
+      tint_rear_install: order.service === "tint" ? s.rearInstalled + "%" : "",
+      location: LOCS[order.loc] ? LOCS[order.loc].name : "",
       notes: c.notes || "", sms_consent: c.consent ? "yes" : "no",
       summary: [SERVICES[order.service].title, ...s.lines, "Vehicle: " + v.label, s.price].join(" | "),
       source: "website checkout", page: location.href,
     };
     sendLead(lead);
-    if (order.service === "ppf") return goStep("done");
-    const cal = BOOKING[order.service];
+    const L = LOCS[order.loc], cal = L && L.calendars && L.calendars[order.service];
+    if (order.service === "ppf" || !cal) {
+      $("#doneTitle").textContent = order.service === "ppf" ? "Estimate requested" : "Request received";
+      $("#doneText").textContent = order.service === "ppf"
+        ? `We'll call you within 1 business day to set up your free in-person PPF estimate at SBN ${L.name}.`
+        : `SBN ${L.name} will call you within 1 business day to confirm your time and take the deposit.`;
+      $("#doneCall").href = "tel:" + L.tel; $("#doneCall").lastChild.textContent = "Need us sooner? " + L.phone;
+      return goStep("done");
+    }
     const q = new URLSearchParams({ first_name: c.first_name, last_name: c.last_name, email: c.email, phone: c.phone });
     $("#bookTitle").textContent = "Pick a time & pay deposit";
     renderSummary($("#bookSummary"));
-    frame.src = cal.url + (cal.url.includes("?") ? "&" : "?") + q;
+    frame.src = cal + (cal.includes("?") ? "&" : "?") + q;
     goStep("book");
   });
 }
@@ -232,7 +273,9 @@ const overlay = $("#overlay"); if (overlay) overlay.addEventListener("click", cl
 addEventListener("keydown", e => { if (e.key === "Escape") { closeModal(); if (lb) lb.classList.remove("open"); } });
 
 /* auto-open the picker once per browser session, after the visitor scrolls past the first screen (home only) */
-if (document.body.dataset.autoModal === "1") {
+if (document.body.dataset.autoModal === "1" && !PAGE_LOC) {
+  if (!getLoc()) setTimeout(() => { if (!document.body.classList.contains("modal-open")) openModal("where"); }, 700);
+} else if (document.body.dataset.autoModal === "1") {
   let shown = false;
   try { shown = sessionStorage.getItem("sbn_modal_seen") === "1"; } catch (e) {}
   addEventListener("scroll", function auto() {

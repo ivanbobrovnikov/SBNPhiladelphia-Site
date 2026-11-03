@@ -649,3 +649,31 @@ footer{border-top:1px solid var(--line);padding:4rem 1rem 2rem;background:var(--
 .co-ws b{color:var(--cyan)}
 .size-txt{font-size:.72rem!important;color:var(--muted)!important;font-weight:500!important}
 #coSize{font-style:normal;text-transform:none;letter-spacing:0;font-weight:500;color:var(--cyan)}
+
+/* =========================================================
+   LOCATIONS
+   ========================================================= */
+.loc-btn{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;padding:.5rem .85rem;border-radius:999px;border:1px solid var(--line-2);color:rgba(243,246,249,.85);margin-left:.4rem;transition:all .2s}
+.loc-btn:hover{border-color:rgba(255,255,255,.4);color:#fff}
+.loc-btn svg{color:var(--cyan)}
+.mobile-menu .loc-btn{width:100%;justify-content:center;margin-left:0;padding:.8rem}
+.loc-grid{display:grid;gap:1rem}
+@media(min-width:800px){.loc-grid{grid-template-columns:repeat(3,1fr)}}
+.loc-tile{display:flex;flex-direction:column;gap:.6rem;border:1px solid var(--line);border-radius:24px;padding:1.6rem;background:var(--surface);min-height:220px;transition:border-color .3s,transform .3s var(--ease)}
+.loc-tile:hover{border-color:rgba(26,140,255,.55);transform:translateY(-3px)}
+.loc-tile .row{display:flex;justify-content:space-between;align-items:center}
+.loc-tile h3{font-size:2rem}
+.loc-tile p{color:var(--muted);font-size:.9rem;line-height:1.6;flex:1}
+.loc-tile .go{display:inline-flex;align-items:center;gap:.4rem;color:var(--cyan);font-weight:700;font-size:.86rem}
+.map.soon{display:grid;place-items:center;text-align:center;min-height:440px;background:radial-gradient(ellipse at 50% 30%,rgba(26,140,255,.18),transparent 65%),var(--surface)}
+.map.soon h3{font-size:clamp(2rem,4vw,3rem);margin:.5rem 0}
+.map.soon p{color:var(--muted)}
+.loc-card .val a{color:#fff}
+.link-btn{color:var(--muted);text-decoration:underline;font-size:.82rem}
+.link-btn:hover{color:#fff}
+.loc-card-m h5{font-size:1.1rem}
+@media(min-width:960px) and (max-width:1180px){.nav a{padding:.5rem .55rem}}
+@media(min-width:800px){.loc-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1150px){.loc-grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:640px){[data-step="where"] .m-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:639px){[data-step="where"] .m-card .in{min-height:0;gap:.35rem;padding:.8rem 1rem}[data-step="where"] .m-card .see,[data-step="where"] .m-ic{display:none}[data-step="where"] .m-grid{gap:.5rem}}
