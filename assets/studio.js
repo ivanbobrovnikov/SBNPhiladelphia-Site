@@ -13,10 +13,10 @@
   const state = window.SBNState = window.SBNState || { vehicle: null };
 
   const VLTS = [70, 50, 35, 20, 15, 5];
-  const FILMS = {
-    ceramic: { name: "Ceramic Tint", desc: "Sides & rear · lifetime warranty", price: 299, was: 499, heat: 45, heatTxt: "40–45%" },
-    nano: { name: "Nano Ceramic Tint", desc: "Max heat rejection · signal-safe", price: 399, was: 599, heat: 60, heatTxt: "50–60%" },
-  };
+  // Films and prices live in site.js (window.SBN_PRICES) so the tool, checkout and popup always agree.
+  const PRICES = window.SBN_PRICES, FILMS = PRICES.tint;
+  const price = (k, size, ws) => window.SBN_tintPrice(k, size, ws);
+  const irTxt = f => f.irTxt || f.ir + "%";
 
   /* Vehicle block shared by the tint and PPF tools: Year/Make/Model + "preview as" body style chips. */
   function vehicleBlock(root, onStyle) {
@@ -36,7 +36,8 @@
 
   /* ---------------------------------------------------------- TINT */
   function tint(root) {
-    const s = { type: (state.vehicle && state.vehicle.style) || "sports", front: 70, rear: 20, film: "nano" };
+    const s = { type: (state.vehicle && state.vehicle.style) || "sports", front: 70, rear: 20, film: "premium", size: "std", ws: "no" };
+    if (s.type === "truck") s.size = "large";
     root.innerHTML = `
     <div class="studio">
       <div class="stage">
@@ -52,8 +53,12 @@
           ${VLTS.map(v => `<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}</div></div>
         <div><div class="ctl-label">Rear windows <em>VLT %</em></div><div class="vlt" data-c="rear">
           ${VLTS.map(v => `<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}</div></div>
+        <div><div class="ctl-label">Vehicle size</div><div class="chips" data-c="size">
+          <button class="chip-btn" data-v="std">Coupe / sedan / small SUV</button><button class="chip-btn" data-v="large">Large SUV / truck +$${PRICES.LARGE_EXTRA}</button></div></div>
+        <div><div class="ctl-label">Windshield</div><div class="chips" data-c="ws">
+          <button class="chip-btn" data-v="no">Sides &amp; rear only</button><button class="chip-btn" data-v="yes">Add windshield <span data-o="wsp"></span></button></div></div>
         <div><div class="ctl-label">Film</div><div class="film" data-c="film">
-          ${Object.entries(FILMS).map(([k, f]) => `<button class="film-opt" data-v="${k}"><span><b>${f.name}</b><small>${f.desc}</small></span><span class="p">$${f.price}<s>$${f.was}</s></span></button>`).join("")}</div></div>
+          ${Object.entries(FILMS).map(([k, f]) => `<button class="film-opt" data-v="${k}"><span><b>${f.name}</b><small>${irTxt(f)} IR heat rejection · 99% UV</small></span><span class="p" data-p="${k}"></span></button>`).join("")}</div></div>
         <div class="bars" data-o="bars"></div>
         <div class="summary">
           <p class="note-sm" data-o="note"></p>
@@ -78,10 +83,13 @@
       $('[data-o="front"]').textContent = s.front + "%";
       $('[data-o="rear"]').textContent = s.rear + "%";
       const f = FILMS[s.film];
-      $('[data-o="bars"]').innerHTML = [["UV blocked", 99, "99%"], ["Heat rejection", f.heat, f.heatTxt], ["Signal-friendly", 100, "Yes"]]
+      $('[data-o="bars"]').innerHTML = [["UV blocked", 99, "99%"], ["IR heat rejection", f.ir, irTxt(f)], ["Signal-friendly", 100, "Yes"]]
         .map(([n, v, t]) => `<div class="bar-row"><span>${n}</span><span class="bar"><i style="width:${v}%"></i></span><b>${t}</b></div>`).join("");
-      $('[data-o="note"]').textContent = `${f.name}: front ${s.front}%, rear ${s.rear}%. Sides & rear windows, about 2–3 hours, lifetime warranty.`;
-      $('[data-o="book"]').innerHTML = `Book ${f.name} · $${f.price} ${ic("i-arrow")}`;
+      const ws = s.ws === "yes";
+      root.querySelectorAll("[data-p]").forEach(el => el.textContent = price(el.dataset.p, s.size, ws));
+      $('[data-o="wsp"]').textContent = "+$" + PRICES.windshield[s.film];
+      $('[data-o="note"]').textContent = `${f.name}: front ${s.front}%, rear ${s.rear}%. Sides & rear${ws ? " + windshield" : ""}, about 2–3 hours, lifetime warranty.`;
+      $('[data-o="book"]').innerHTML = `Book ${f.name} · ${price(s.film, s.size, ws)} ${ic("i-arrow")}`;
       root.querySelectorAll("[data-c]").forEach(g => g.querySelectorAll("[data-v]").forEach(b => b.classList.toggle("active", String(s[g.dataset.c]) === b.dataset.v)));
     }
     root.addEventListener("click", e => {
@@ -90,8 +98,11 @@
       s[key] = ["front", "rear"].includes(key) ? +b.dataset.v : b.dataset.v;
       key === "type" ? drawCar() : update();
     });
-    vehicleBlock(root, style => { if (style !== s.type) { s.type = style; drawCar(); } });
-    $('[data-o="book"]').addEventListener("click", () => checkout({ service: "tint", film: s.film, front: s.front, rear: s.rear }));
+    vehicleBlock(root, style => {
+      if (style === "truck") s.size = "large";
+      if (style !== s.type) { s.type = style; drawCar(); } else update();
+    });
+    $('[data-o="book"]').addEventListener("click", () => checkout({ service: "tint", film: s.film, front: s.front, rear: s.rear, size: s.size, windshield: s.ws === "yes" }));
     drawCar();
   }
 
@@ -116,12 +127,13 @@
       </div>
       <div class="panel">
         <div><div class="ctl-label">10-Year Ceramic Coating</div>
-          <div class="summary" style="border:0;padding:0"><div class="tot"><b>$499</b><small><s>$2,195</s> · limited sale</small></div></div></div>
+          <div class="summary" style="border:0;padding:0"><div class="tot"><b>$${PRICES.ceramic}</b><small><s>$${PRICES.ceramicWas.toLocaleString()}</s> · limited sale</small></div></div></div>
         <div class="stat3"><div><b>10yr</b><small>Protection</small></div><div><b>110°</b><small>Water beading</small></div><div><b>99%</b><small>UV blocked</small></div></div>
         <div><div class="ctl-label">What's included</div>
           <ol class="steps-mini"><li>Exterior wash</li><li>Iron decontamination</li><li>Clay bar</li><li>Paint enhancement</li><li>10-year ceramic coating</li></ol></div>
         <div class="summary"><p class="note-sm">About 8–10 hours. Booking takes under a minute.</p>
-          <button class="btn btn-primary" data-o="book">Book ceramic · $499 ${ic("i-arrow")}</button></div>
+          <button class="btn btn-primary" data-o="book">Book ceramic · $${PRICES.ceramic} ${ic("i-arrow")}</button>
+          <p class="note-sm">Want additional services? <a class="blue" href="tel:+12672637342">Call 267 263 7342</a>.</p></div>
       </div>
     </div>`;
     const ba = root.querySelector(".ba"), input = ba.querySelector("input"), hint = ba.querySelector(".hint");

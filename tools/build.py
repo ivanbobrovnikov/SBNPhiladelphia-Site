@@ -182,12 +182,14 @@ OTHERS = {"ppf": ("i-shield", "Paint Protection Film", "Invisible shield against
           "tint": ("i-eye", "Window Tinting", "Block UV, slash heat, elevate your look.", "services/window-tinting/")}
 
 
-def plan_card(name, was, now, feats, duration, book, featured, film=None):
+def plan_card(name, was, now, feats, duration, book, featured, film=None, sub="Book today's price", pre="Sides &amp; rear"):
     top = '<div class="plan-top">★ MOST POPULAR</div>' if featured else ""
     btn = "btn-primary" if featured else "btn-white"
+    head = '<span class="sale">Sale</span>' if was else ""
+    was_html = f'<div class="was">{was}</div>' if was else f'<div class="was" style="text-decoration:none">{pre}</div>'
     return f'''<div class="plan{' featured' if featured else ''} reveal">{top}<div class="plan-body">
-      <div class="plan-head"><span class="plan-name">{e(name)}</span><span class="sale">Sale</span></div>
-      <div class="was">{was}</div><div class="price">{now}</div><div class="today">Book today's price</div>
+      <div class="plan-head"><span class="plan-name">{e(name)}</span>{head}</div>
+      {was_html}<div class="price">{now}</div><div class="today"{"" if was else ' style="color:var(--muted)"'}>{sub}</div>
       <ul class="feat">{checks(feats)}</ul>
       <div class="duration">{ic("i-clock", 15)}{duration}</div>
       <button class="btn {btn}" data-book="{book}"{f' data-film="{film}"' if film else ""}>Book Now {ic("i-arrow", 16, "arrow")}</button>
@@ -266,7 +268,7 @@ service_page("services/ceramic-coating", "ceramic", "CERAMIC", "Ceramic Coating"
   <span class="badge">Pricing</span>
   <h2 class="h-display h2">Choose Your Package</h2>
   <p class="lead">Pricing varies by vehicle size and condition — contact us for an exact quote.</p>
-  <div class="plans center-1" style="text-align:left">{plan_card("10 Year Ceramic Coating", "$2,195", "$499",
+  <div class="plans center-1" style="text-align:left">{plan_card("Ceramic Coating", "$1,295", "$499",
       ["Exterior wash", "Iron decontamination", "Clay bar", "Paint enhancement", "10 year ceramic coating"], "8 – 10 hours", "ceramic", True)}</div>
   <p class="note">Prices vary by vehicle make, model &amp; condition. Contact us for an exact quote — always free.</p>
 </div></section>''')
@@ -277,10 +279,12 @@ service_page("services/window-tinting", "tint", "TINT", "Window Tinting",
   <span class="badge">Pricing</span>
   <h2 class="h-display h2">Choose Your Package</h2>
   <p class="lead">Pricing varies by vehicle size and condition — contact us for an exact quote.</p>
-  <div class="plans center-2" style="text-align:left">
-    {plan_card("Ceramic Window Tint", "$499", "$299", ["Sides & rear windows", "Ceramic tint film", "Blocks up to 99% UV rays", "Reduces heat & glare", "Lifetime warranty"], "2 – 3 hours", "tint", False, "ceramic")}
-    {plan_card("Nano Ceramic Tint", "$599", "$399", ["Sides & rear windows", "Nano ceramic film", "Maximum IR heat rejection", "No signal interference (GPS, Bluetooth)", "Lifetime warranty"], "2 – 3 hours", "tint", True, "nano")}
+  <div class="plans center-3" style="text-align:left">
+    {plan_card("Standard Ceramic", "", "$199", ["Sides & rear windows", "60% IR heat rejection", "Blocks 99% UV", "Lifetime warranty"], "2 – 3 hours", "tint", False, "standard", "Windshield +$195")}
+    {plan_card("Premium Ceramic", "", "$299", ["Sides & rear windows", "75% IR heat rejection", "Blocks 99% UV", "Lifetime warranty"], "2 – 3 hours", "tint", True, "premium", "Windshield +$225")}
+    {plan_card("Nano Ceramic", "", "$450", ["Sides & rear windows", "95%+ IR heat rejection", "Blocks 99% UV", "Lifetime warranty"], "2 – 3 hours", "tint", False, "nano", "Windshield +$250", "Starting at")}
   </div>
+  <p class="note">Prices for coupes, sedans &amp; small SUVs. Larger SUVs &amp; trucks +$60 for any film.</p>
   <p class="note">Prices vary by vehicle make, model &amp; condition. Contact us for an exact quote — always free.</p>
 </div></section>''')
 
@@ -353,18 +357,18 @@ philly_page("ppf-philadelphia", "Paint Protection Film Philadelphia PA | PPF Ins
 <p class="intro" style="margin-top:0">Fill out the form below and we'll reach out within 1 business day to schedule your free in-person estimate. Or call us directly at <a class="blue" href="{TEL}">267 263 7342</a>.</p>{form}</div>''')
 
 philly_page("ceramic-coating-philadelphia", "Ceramic Coating Philadelphia PA | 10 Year Package $499 | SBN Auto Styling",
-            "Professional ceramic coating in Philadelphia PA. 10-year ceramic coating just $499 (reg. $2,195). Includes wash, iron decontamination, clay bar, and paint enhancement. Book online today.",
+            "Professional ceramic coating in Philadelphia PA. 10-year ceramic coating just $499 (reg. $1,295). Includes wash, iron decontamination, clay bar, and paint enhancement. Book online today.",
             "Philadelphia, PA", "Ceramic Coating", "Philadelphia",
-            "SBN Auto Styling provides professional ceramic coating for Philadelphia vehicles — a 10-year package starting with proper paint prep that most shops skip. Sale price: $499, regularly $2,195.",
+            "SBN Auto Styling provides professional ceramic coating for Philadelphia vehicles — a 10-year package starting with proper paint prep that most shops skip. Sale price: $499, regularly $1,295. Additional services available, just call.",
             f'<button class="btn btn-primary btn-md" data-book="ceramic">Book Online Now</button><a class="btn btn-dark btn-md" href="{{R}}services/ceramic-coating/">View Full Service Details →</a>',
-            f'''<div class="block"><h2>Ceramic Coating Packages</h2>{pkg("10 Year Package — Best Value", "$499", "$2,195", ["Exterior wash", "Iron decontamination", "Clay bar", "Paint enhancement", "10 year ceramic coating"], True)}</div>
+            f'''<div class="block"><h2>Ceramic Coating Packages</h2>{pkg("10 Year Package — Best Value", "$499", "$1,295", ["Exterior wash", "Iron decontamination", "Clay bar", "Paint enhancement", "10 year ceramic coating"], True)}</div>
 <div class="block"><h2>What Ceramic Coating Does for Your Car</h2>{boxes([
     ("Hydrophobic Protection", "Water, mud, and road grime bead off instantly. Your car stays cleaner longer and washing takes half the time."),
     ("UV & Fade Resistance", "Philadelphia summers fade unprotected paint. Ceramic coating blocks UV rays at the clear coat level, keeping your color deep and rich."),
     ("Chemical Resistance", "Bird droppings, tree sap, road salt — all repelled by the ceramic layer. No more etching or paint damage from common contaminants."),
     ("Deep Gloss Finish", "Ceramic coating enhances the depth of your paint like nothing else. The result looks better than the day you drove it off the lot.")])}</div>
 <div class="block"><h2>FAQ — Ceramic Coating Philadelphia</h2>{faq([
-    ("How much does ceramic coating cost in Philadelphia?", "SBN Auto Styling's 10-year ceramic coating package is currently $499 (regularly $2,195). It includes an exterior wash, iron decontamination, clay bar, and paint enhancement — not just the coating."),
+    ("How much does ceramic coating cost in Philadelphia?", "SBN Auto Styling's 10-year ceramic coating package is currently $499 (regularly $1,295). It includes an exterior wash, iron decontamination, clay bar, and paint enhancement — not just the coating."),
     ("Is ceramic coating worth it in Philadelphia?", "Yes. Philadelphia's weather — harsh winters, road salt, summer UV — accelerates paint degradation. Ceramic coating creates a chemically bonded layer that repels water, resists UV fading, and makes washing dramatically easier. Most customers recoup the cost in reduced maintenance and better resale value."),
     ("How long does ceramic coating last?", "Our 10-year package uses a high-grade formulation that bonds deeply to the clear coat for a decade of protection. It requires basic maintenance — no waxing, just regular washing."),
     ("What's included in your ceramic coating package?", "The package includes an exterior wash, iron decontamination, clay bar, paint enhancement, and a 10-year ceramic coating. We never apply coating over dirty or contaminated paint.")])}</div>
@@ -373,13 +377,15 @@ philly_page("ceramic-coating-philadelphia", "Ceramic Coating Philadelphia PA | 1
 <button class="btn btn-primary btn-md" data-book="ceramic">Book Now — Sale Price</button></div>''')
 
 philly_page("window-tinting-philadelphia", "Window Tinting Philadelphia PA | Ceramic & Nano Ceramic Tint | SBN Auto Styling",
-            "Professional window tinting in Philadelphia PA. Ceramic tint from $299, nano ceramic from $399. PA legal tint. Lifetime warranty. Book online at SBN Auto Styling.",
+            "Professional window tinting in Philadelphia PA. Ceramic tint from $199: Standard, Premium and Nano Ceramic films. PA legal tint. Lifetime warranty. Book online at SBN Auto Styling.",
             "Philadelphia, PA", "Window Tinting", "Philadelphia",
             "SBN Auto Styling provides ceramic and nano ceramic window tinting in Philadelphia — always PA-legal, bubble-free installs with a lifetime warranty. Sale pricing available on all packages.",
             f'<button class="btn btn-primary btn-md" data-book="tint">Book Online Now</button><a class="btn btn-dark btn-md" href="{{R}}services/window-tinting/">View Full Service Details →</a>',
             f'''<div class="block"><h2>Tint Packages</h2><div class="cards2">
-{pkg("Ceramic Tint", "$299", "$499", ["Sides & rear windows", "Ceramic tint film", "Blocks up to 99% UV rays", "Reduces heat & glare", "Lifetime warranty"])}
-{pkg("Nano Ceramic Tint — Best", "$399", "$599", ["Sides & rear windows", "Nano ceramic film", "Maximum IR heat rejection", "No signal interference (GPS, Bluetooth)", "Lifetime warranty"], True)}</div>
+{pkg("Standard Ceramic", "$199", "", ["Sides & rear windows", "60% IR heat rejection", "Blocks 99% UV", "Lifetime warranty"])}
+{pkg("Premium Ceramic — Most Popular", "$299", "", ["Sides & rear windows", "75% IR heat rejection", "Blocks 99% UV", "Lifetime warranty"], True)}
+{pkg("Nano Ceramic — Max Heat Rejection", "from $450", "", ["Sides & rear windows", "95%+ IR heat rejection", "Blocks 99% UV", "Lifetime warranty"])}</div>
+<p class="small-note">Prices for coupes, sedans &amp; small SUVs; larger SUVs &amp; trucks +$60. Add the windshield: +$195 Standard, +$225 Premium, +$250 Nano.</p>
 <p class="small-note">All tint is PA-legal. Front windows tinted to comply with Pennsylvania's 70% VLT requirement.</p></div>
 <div class="block"><h2>Benefits of Window Tinting in Philadelphia</h2>{boxes([
     ("Beat Philadelphia Summers", "Ceramic tint dramatically reduces the solar heat that builds up inside your car — keeping it cooler without working the AC as hard."),
@@ -388,8 +394,8 @@ philly_page("window-tinting-philadelphia", "Window Tinting Philadelphia PA | Cer
     ("Clean, Factory Look", "Our film is precision-cut to your vehicle. No razor blades on glass, no excess film — just clean edges that look like they came from the factory.")])}</div>
 <div class="block"><h2>FAQ — Window Tinting Philadelphia</h2>{faq([
     ("What is the legal window tint percentage in Pennsylvania?", "In Pennsylvania, front side windows must allow more than 70% of light in (70% VLT). Rear side windows and the rear windshield can be any darkness. We always install PA-legal tint — you'll never fail inspection because of our work."),
-    ("How much does window tinting cost in Philadelphia?", "SBN Auto Styling offers ceramic window tint for $299 (sides & rear, sale from $499) and nano ceramic tint for $399 (sale from $599). Both include all side and rear windows with a lifetime warranty."),
-    ("What is the difference between ceramic tint and nano ceramic tint?", "Standard ceramic tint blocks UV and reduces heat effectively. Nano ceramic tint uses smaller particles for maximum infrared heat rejection while maintaining clarity — and crucially, it doesn't interfere with GPS, Bluetooth, or cell signal like metallic tints do."),
+    ("How much does window tinting cost in Philadelphia?", "Sides & rear windows on a coupe, sedan or small SUV: Standard Ceramic $199, Premium Ceramic $299, Nano Ceramic from $450. Larger SUVs and trucks are $60 more. Adding the windshield is $195 / $225 / $250 depending on film. All include a lifetime warranty."),
+    ("What's the difference between Standard, Premium and Nano Ceramic?", "All three are ceramic films that block 99% of UV and don't interfere with GPS, Bluetooth or cell signal. The difference is infrared heat rejection: Standard 60%, Premium 75%, Nano 95%+."),
     ("How long does window tinting take in Philadelphia?", "Most vehicles are completed in 2–3 hours at our Philadelphia shop. We cut all film precisely to your vehicle's windows — no razor blades on the glass, clean edges every time."),
     ("Does window tint really reduce heat?", "Yes — significantly. Nano ceramic tint can reject up to 99% of UV rays and dramatically reduce infrared heat buildup. On a hot Philadelphia summer day, the difference inside the car is immediate and noticeable.")])}</div>
 <div class="block closer"><h2 class="h-display" style="font-size:2rem">Book Your Tint Today</h2>
@@ -450,16 +456,16 @@ region_page("ppf-bucks-county", "Paint Protection Film Bucks County PA | SBN Aut
             f'<a class="btn btn-primary btn-md" href="{TEL}">Call 267 263 7342</a>', "100 Red Lion Road Unit 3, Philadelphia, PA 19115 · Mon–Fri 8am–6pm · Sat 8am–5pm")
 
 region_page("ceramic-coating-northeast-philadelphia", "Ceramic Coating Northeast Philadelphia | SBN Auto Styling",
-            "Professional ceramic coating in Northeast Philadelphia — 10-year package just $499 (reg. $2,195). Serving Mayfair, Fox Chase, Bustleton, Rhawnhurst, and surrounding areas. Call 267 263 7342.",
+            "Professional ceramic coating in Northeast Philadelphia — 10-year package just $499 (reg. $1,295). Serving Mayfair, Fox Chase, Bustleton, Rhawnhurst, and surrounding areas. Call 267 263 7342.",
             "Northeast Philadelphia, PA", "Ceramic Coating", "Northeast Philadelphia",
             "SBN Auto Styling offers professional nano-ceramic coating to Northeast Philadelphia drivers — Mayfair, Fox Chase, Bustleton, Somerton, and beyond. Showroom shine and UV protection that lasts years, not months.",
-            '<div class="mini-pkgs"><div class="mini"><div class="k">10-Year Package — Best Value</div><div class="pr"><b>$499</b><s>$2,195</s></div><small>Wash · Iron Decon · Clay Bar · Paint Enhancement · 10yr Coating</small></div></div>',
+            '<div class="mini-pkgs"><div class="mini"><div class="k">10-Year Package — Best Value</div><div class="pr"><b>$499</b><s>$1,295</s></div><small>Wash · Iron Decon · Clay Bar · Paint Enhancement · 10yr Coating</small></div></div>',
             f'<button class="btn btn-primary btn-md" data-book="ceramic">Book Online Now</button><a class="btn btn-dark btn-md" href="{TEL}">Call 267 263 7342</a>',
             "Why Northeast Philly Drivers Choose Ceramic", [
                 "Northeast Philadelphia streets are tough on car paint. Salt-covered roads in winter, UV exposure in summer, and constant exposure to industrial fallout and road grime break down your clear coat faster than you might think.",
                 "Ceramic coating creates a semi-permanent nano-ceramic layer that bonds directly to your paint, providing a hydrophobic surface that repels water, UV rays, bird droppings, tree sap, and brake dust.",
                 "Unlike traditional wax that washes off in weeks, our 10-year formulation protects your investment for years with minimal maintenance."],
-            "What's Included", pkg("10-Year Package", "$499", "$2,195", ["Exterior wash", "Iron decontamination", "Clay bar", "Paint enhancement", "10 year ceramic coating"], True),
+            "What's Included", pkg("10-Year Package", "$499", "$1,295", ["Exterior wash", "Iron decontamination", "Clay bar", "Paint enhancement", "10 year ceramic coating"], True),
             "Northeast Philadelphia Neighborhoods We Serve", NEPHL, "Ceramic Coating NE Philly — FAQ", [
                 ("Where are you located relative to Northeast Philadelphia?", "SBN Auto Styling is at 100 Red Lion Road Unit 3, Philadelphia, PA 19115 — in the heart of Northeast Philadelphia near the Bucks County border. We're accessible from I-95, Route 1, and the PA Turnpike."),
                 ("What's included in the 10-year ceramic coating package?", "Our 10-year package includes an exterior wash, iron decontamination, clay bar, paint enhancement, and a 10-year ceramic coating."),
@@ -471,22 +477,23 @@ region_page("ceramic-coating-northeast-philadelphia", "Ceramic Coating Northeast
             '<button class="btn btn-primary btn-md" data-book="ceramic">Book Online Now</button>', ADDR)
 
 region_page("window-tinting-bucks-county", "Window Tinting Bucks County PA | SBN Auto Styling",
-            "Professional ceramic window tinting serving Bucks County PA — Warminster, Langhorne, Newtown, and surrounding areas. Ceramic and nano ceramic tint from $299. PA legal. Call 267 263 7342.",
+            "Professional ceramic window tinting serving Bucks County PA — Warminster, Langhorne, Newtown, and surrounding areas. Ceramic tint from $199. PA legal. Call 267 263 7342.",
             "Bucks County, PA", "Window Tinting", "Bucks County",
             "SBN Auto Styling offers premium ceramic and nano ceramic window tinting to Bucks County drivers. Block UV, reduce heat, and protect your interior — all PA-legal compliant.",
-            '<div class="mini-pkgs two"><div class="mini"><div class="k">Ceramic Tint — Sides &amp; Rear</div><div class="pr"><b>$299</b><s>$499</s></div><small>UV block · Heat rejection · PA legal</small></div><div class="mini"><div class="k">Nano Ceramic — Sides &amp; Rear</div><div class="pr"><b>$399</b><s>$599</s></div><small>Max heat rejection · Signal transparent</small></div></div>',
+            '<div class="mini-pkgs three"><div class="mini"><div class="k">Standard Ceramic</div><div class="pr"><b>$199</b></div><small>60% IR heat rejection</small></div><div class="mini"><div class="k">Premium Ceramic</div><div class="pr"><b>$299</b></div><small>75% IR heat rejection</small></div><div class="mini"><div class="k">Nano Ceramic</div><div class="pr"><b>$450+</b></div><small>95%+ IR heat rejection</small></div></div><p class="small-note" style="margin:-1rem 0 1.5rem">Sides &amp; rear, coupes/sedans/small SUVs. Larger SUVs &amp; trucks +$60.</p>',
             f'<button class="btn btn-primary btn-md" data-book="tint">Book Online Now</button><a class="btn btn-dark btn-md" href="{TEL}">Call 267 263 7342</a>',
             "Why Choose Ceramic Tint?", [
                 "Not all window film is created equal. Cheap dyed tints fade, bubble, and turn purple within a few years. Ceramic tint uses metallic oxide particles that block heat and UV without degrading over time.",
                 "Bucks County summers are intense. Ceramic tint can reduce interior cabin temperatures by 15–30°F, protecting your dashboard, seats, and leather while keeping every drive comfortable.",
                 "Unlike metalized films, ceramic and nano ceramic tints don't interfere with GPS signals, satellite radio, E-ZPass, or cell phone reception — critical for daily commuters on the PA Turnpike and I-95."],
             "Tint Comparison", '<div class="stack">' +
-            pkg("Ceramic Window Tint", "$299", "", ["Blocks 99% of UV rays", "Rejects 40–45% solar heat", "No signal interference", "PA legal — all windows", "10+ year lifespan"]) +
-            pkg("Nano Ceramic Tint", "$399", "", ["Superior heat rejection (50–60%)", "Finer particle matrix for clarity", "100% signal transparent", "Deep gloss finish", "Ideal for luxury vehicles"], True) + "</div>",
+            pkg("Standard Ceramic — $199", "", "", ["Blocks 99% of UV rays", "60% IR heat rejection", "No signal interference", "10+ year lifespan"]) +
+            pkg("Premium Ceramic — $299", "", "", ["Blocks 99% of UV rays", "75% IR heat rejection", "No signal interference", "Noticeably cooler cabin"], True) +
+            pkg("Nano Ceramic — from $450", "", "", ["Blocks 99% of UV rays", "95%+ IR heat rejection", "100% signal transparent", "Ideal for luxury vehicles"]) + "</div>",
             "Bucks County Areas We Serve", BUCKS, "Window Tinting Bucks County — FAQ", [
                 ("Do you tint windows for Bucks County customers?", "Yes. We serve all of Bucks County including Warminster, Langhorne, Newtown, Doylestown, Bensalem, Levittown, and surrounding areas. Our shop is at 100 Red Lion Road Unit 3, Philadelphia, PA 19115 — just a short drive from most Bucks County towns."),
                 ("What are the window tint laws in Pennsylvania?", "Pennsylvania law requires at least 70% Visible Light Transmission (VLT) on front side windows and the front windshield (above the AS-1 line). Rear side windows and the rear windshield have no VLT restriction. All our tint installations are PA-legal compliant."),
-                ("What is the difference between ceramic and nano ceramic window tint?", "Both block UV rays and reject heat. Nano ceramic tint uses a finer ceramic particle matrix for superior heat rejection — rejecting up to 50–60% of total solar energy versus 40–45% for standard ceramic. Nano ceramic is also signal-transparent, meaning no interference with GPS, phone signals, or toll transponders."),
+                ("What's the difference between Standard, Premium and Nano Ceramic tint?", "All three of our films are ceramic: they block 99% of UV and never interfere with GPS, phone signals or toll transponders. The difference is infrared heat rejection: Standard Ceramic 60%, Premium Ceramic 75%, Nano Ceramic 95%+."),
                 ("How long does window tinting take?", "Most vehicles can be completed in 2–4 hours. We recommend avoiding rolling down windows for 3–5 days post-install to allow the adhesive to cure fully."),
                 ("Does ceramic tint replace the need for sunshades?", "Ceramic tint significantly reduces interior heat buildup — in some cases by 15–30°F on a hot day. While it won't completely eliminate the need for a sunshade on extreme summer days, most customers find it dramatically more comfortable and rely on sunshades far less."),
                 ("How long does window tint last?", "Quality ceramic and nano ceramic films last 10+ years without peeling, bubbling, or fading. Cheaper dyed films may begin to purple or bubble within 3–5 years. SBN only installs premium-grade film.")],
@@ -531,7 +538,7 @@ POSTS = [
                ("ul", ["<b>DIY waxing</b> (product + time annually): $200–$400/year", "<b>Professional wax/sealant:</b> $100–$250 every 6 months", "<b>SBN 10-year ceramic:</b> $499 one time (covers 10 years)"]),
                ("h", "Which Should You Choose?"),
                ("p", "If you're keeping your car 2+ years and want the best protection with minimal ongoing maintenance, ceramic coating wins easily. If you're leasing for 2 years or on a tight budget right now, a quality sealant is fine — but you'll be spending more per year over time.")],
-         cta=("SBN Auto Styling's 10-year ceramic package is $499 (reg. $2,195) and includes full paint prep — not just the coating application.", "Book Ceramic Coating", "book:ceramic")),
+         cta=("SBN Auto Styling's 10-year ceramic package is $499 (reg. $1,295) and includes full paint prep — not just the coating application.", "Book Ceramic Coating", "book:ceramic")),
     dict(slug="pennsylvania-window-tint-laws", cat="Window Tinting", read="4 min read", date="January 20, 2026",
          title="Pennsylvania Window Tint Laws: What's Legal in 2026?",
          dek="Pennsylvania has specific VLT requirements for window tint. Here's exactly what's legal, what'll fail inspection, and how SBN ensures compliance.",

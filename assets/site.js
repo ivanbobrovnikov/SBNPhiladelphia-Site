@@ -12,6 +12,18 @@ const BOOKING = {
 // GoHighLevel inbound webhook (Automation → Workflow → trigger "Inbound Webhook" → copy URL).
 // Every checkout and estimate request is posted here with the vehicle, service, film and tint %.
 const GHL_WEBHOOK = "";
+// Prices. Tint prices are for coupes, sedans and small SUVs; large SUVs and trucks add LARGE_EXTRA.
+// The tint visualizer, checkout and booking popup all read from here.
+const PRICES = window.SBN_PRICES = {
+  tint: {
+    standard: { name: "Standard Ceramic", ir: 60, price: 199, from: false },
+    premium:  { name: "Premium Ceramic",  ir: 75, price: 299, from: false },
+    nano:     { name: "Nano Ceramic",     ir: 95, price: 450, from: true, irTxt: "95%+" },
+  },
+  LARGE_EXTRA: 60,
+  windshield: { standard: 195, premium: 225, nano: 250 },  // add-on, per film
+  ceramic: 499, ceramicWas: 1295,  // ceramic coating sale price / regular price
+};
 // Fallback for the PPF estimate form if no webhook is set: opens an email.
 const LEAD_EMAIL = "hello@sbnautostyling.com";
 
@@ -102,10 +114,17 @@ function goStep(name) { $$(".m-step").forEach(s => s.classList.toggle("active", 
 function openModal(step = "pick") { goStep(step); document.body.classList.add("modal-open"); document.documentElement.style.overflow = "hidden"; }
 function closeModal() { document.body.classList.remove("modal-open"); document.documentElement.style.overflow = ""; if (frame) frame.removeAttribute("src"); }
 /* ---------- checkout: vehicle + service details + contact → GoHighLevel ---------- */
-const FILMS = { ceramic: { name: "Ceramic Tint", price: 299 }, nano: { name: "Nano Ceramic Tint", price: 399 } };
+const FILMS = PRICES.tint;
+/* Tint price for a film, vehicle size ("std" or "large") and optional windshield, e.g. "$450+" for nano. */
+const tintPrice = (film, size, windshield) => {
+  const f = FILMS[film], p = f.price + (size === "large" ? PRICES.LARGE_EXTRA : 0) + (windshield ? PRICES.windshield[film] : 0);
+  return "$" + p + (f.from ? "+" : "");
+};
+window.SBN_tintPrice = tintPrice;
+const SIZES = { std: "Coupe / sedan / small SUV", large: "Large SUV / truck" };
 const SERVICES = {
   tint: { title: "Window Tinting", next: "Next: pick a time and pay your deposit." },
-  ceramic: { title: "10-Year Ceramic Coating", next: "Next: pick a time and pay your deposit." },
+  ceramic: { title: "Ceramic Coating", next: "Next: pick a time and pay your deposit. Want extra services? Call 267 263 7342." },
   ppf: { title: "Paint Protection Film", next: "We'll call you to set up your free in-person estimate." },
 };
 const state = window.SBNState = window.SBNState || { vehicle: null };
@@ -115,9 +134,9 @@ let order = null;
 function orderSummary(o) {
   if (o.service === "tint") {
     const f = FILMS[o.film], installed = Math.max(o.front, 70);
-    return { lines: [f.name + " · sides & rear", `Front ${o.front}% · Rear ${o.rear}%`], price: "$" + f.price, installed };
+    return { lines: [`${f.name} film (${f.irTxt || f.ir + "%"} IR rejection) · sides & rear${o.windshield ? " + windshield" : ""}`, `Front ${o.front}% · Rear ${o.rear}%`, SIZES[o.size] + (o.size === "large" ? ` (+$${PRICES.LARGE_EXTRA})` : "") + (o.windshield ? ` · windshield +$${PRICES.windshield[o.film]}` : "")], price: tintPrice(o.film, o.size, o.windshield), installed };
   }
-  if (o.service === "ceramic") return { lines: ["10-year package: wash, iron decon, clay bar, paint enhancement, coating", "About 8–10 hours"], price: "$499" };
+  if (o.service === "ceramic") return { lines: ["Wash, iron decon, clay bar, paint enhancement, ceramic coating", `Sale price (regularly $${PRICES.ceramicWas.toLocaleString()}) · about 8–10 hours`], price: "$" + PRICES.ceramic };
   return { lines: [(o.pkg || "PPF coverage to be decided") + " · free in-person estimate", "20–30 minutes at our shop"], price: "Free" };
 }
 function renderSummary(el) {
@@ -125,24 +144,37 @@ function renderSummary(el) {
   el.innerHTML = `<div><b>${SERVICES[order.service].title}</b>${s.lines.map(l => `<small>${l}</small>`).join("")}${v ? `<small>Vehicle: ${v.label}</small>` : ""}</div><span>${s.price}</span>`;
 }
 
+function updateWsLabel() { const el = $("#coWsPrice"); if (el && order) el.textContent = "+$" + PRICES.windshield[order.film]; }
 function checkout(o) {
-  order = { film: "nano", front: 70, rear: 20, ...o };
+  const guessSize = state.vehicle && state.vehicle.style === "truck" ? "large" : "std";
+  order = { film: "premium", front: 70, rear: 20, size: guessSize, ...o };
+  if (!FILMS[order.film]) order.film = "premium";
   const form = $("#checkoutForm");
   $("#coTitle").textContent = SERVICES[order.service].title;
   $("#coNext").textContent = SERVICES[order.service].next;
   $("#coSubmit").innerHTML = (order.service === "ppf" ? "Request my free estimate" : "Continue to calendar & deposit") + ' <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg>';
   $("#coTint").hidden = order.service !== "tint";
-  form.film.value = order.film; form.front.value = order.front; form.rear.value = order.rear;
+  form.film.innerHTML = Object.entries(FILMS).map(([k, f]) => `<option value="${k}">${f.name} · ${f.irTxt || f.ir + "%"} IR · ${tintPrice(k, order.size)}</option>`).join("");
+  form.film.value = order.film; form.front.value = order.front; form.rear.value = order.rear; form.size.value = order.size;
+  form.windshield.checked = !!order.windshield; updateWsLabel();
   $("#coLegal").hidden = order.front >= 70;
-  if (window.SBNVehicles) SBNVehicles.mount($("#coVehicle"), v => { state.vehicle = v; $("#coVehErr").hidden = true; renderSummary($("#coSummary")); }, state.vehicle || {});
+  if (window.SBNVehicles) SBNVehicles.mount($("#coVehicle"), v => {
+    state.vehicle = v; $("#coVehErr").hidden = true;
+    if (v && v.style === "truck") { order.size = "large"; form.size.value = "large"; }
+    renderSummary($("#coSummary"));
+  }, state.vehicle || {});
   renderSummary($("#coSummary"));
   openModal("checkout");
 }
 const coForm = $("#checkoutForm");
 if (coForm) {
   coForm.addEventListener("change", e => {
-    if (!["film", "front", "rear"].includes(e.target.name)) return;
-    order[e.target.name] = e.target.name === "film" ? e.target.value : +e.target.value;
+    const k = e.target.name;
+    if (k === "windshield") { order.windshield = e.target.checked; return renderSummary($("#coSummary")); }
+    if (!["film", "front", "rear", "size"].includes(k)) return;
+    order[k] = ["film", "size"].includes(k) ? e.target.value : +e.target.value;
+    if (k === "film") updateWsLabel();
+    if (k === "size") [...coForm.film.options].forEach(o => o.textContent = `${FILMS[o.value].name} · ${FILMS[o.value].irTxt || FILMS[o.value].ir + "%"} IR · ${tintPrice(o.value, order.size)}`);
     $("#coLegal").hidden = order.front >= 70;
     renderSummary($("#coSummary"));
   });
@@ -158,7 +190,9 @@ if (coForm) {
       first_name: c.first_name, last_name: c.last_name, phone: c.phone, email: c.email,
       vehicle: v.label, vehicle_year: v.year, vehicle_make: v.make, vehicle_model: v.model,
       service: SERVICES[order.service].title, price: s.price,
-      package: order.service === "tint" ? FILMS[order.film].name : order.service === "ppf" ? (order.pkg || "") : "10-Year Ceramic",
+      package: order.service === "tint" ? FILMS[order.film].name : order.service === "ppf" ? (order.pkg || "") : "Ceramic Coating",
+      vehicle_size: order.service === "tint" ? SIZES[order.size] : "",
+      windshield: order.service === "tint" ? (order.windshield ? "yes" : "no") : "",
       tint_front_requested: order.service === "tint" ? order.front + "%" : "",
       tint_front_install: order.service === "tint" ? s.installed + "%" : "",
       tint_rear: order.service === "tint" ? order.rear + "%" : "",
@@ -181,7 +215,7 @@ function sendLead(lead) {
   if (!GHL_WEBHOOK) { console.warn("SBN: GHL_WEBHOOK not set, lead not sent", lead); return Promise.resolve(false); }
   return fetch(GHL_WEBHOOK, { method: "POST", mode: "no-cors", body: new URLSearchParams(lead) }).then(() => true, () => false);
 }
-function book(key, film) { checkout({ service: key, film: film || "nano" }); }
+function book(key, film) { checkout(film ? { service: key, film } : { service: key }); }
 window.SBN = { book, checkout, openModal, closeModal, sendLead };
 
 $$("[data-open-modal]").forEach(b => b.addEventListener("click", () => openModal(b.dataset.openModal || "pick")));

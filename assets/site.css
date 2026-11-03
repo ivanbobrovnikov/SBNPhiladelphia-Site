@@ -638,3 +638,12 @@ footer{border-top:1px solid var(--line);padding:4rem 1rem 2rem;background:var(--
 .co-done p{color:var(--muted);max-width:26rem}
 .co-check{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:rgba(34,211,160,.12);color:var(--ok);border:1px solid rgba(34,211,160,.35)}
 @media(max-width:520px){.veh{grid-template-columns:1fr 1fr}.veh [data-k="model"]{grid-column:1/-1}.co .frow{grid-template-columns:1fr}}
+
+/* three tint films */
+@media(min-width:1100px){.price-grid{grid-template-columns:repeat(3,1fr)}}
+.plans.center-3{max-width:72rem;margin:3rem auto 0}
+@media(min-width:900px){.plans.center-3{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:640px){.m-plans.three{grid-template-columns:repeat(3,1fr)}.mini-pkgs.three{grid-template-columns:repeat(3,1fr)}}
+.m-plans.three .price{font-size:2.2rem}
+.co-ws{font-size:.85rem;color:var(--fg)}
+.co-ws b{color:var(--cyan)}
