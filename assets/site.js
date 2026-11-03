@@ -45,23 +45,30 @@ const io = new IntersectionObserver(entries => entries.forEach(e => {
   io.unobserve(e.target);
 }), { threshold: 0.15 });
 
-/* ---------- testimonials (home) ---------- */
-const tgrid = $("#tgrid");
-if (tgrid) {
-  const TESTIMONIALS = [
-    { name: "James M.", text: "Absolutely blown away by the finish. The team at SBN took my brief and executed it perfectly. The ceramic coating is flawless and they detailed the car before handing it back." },
-    { name: "Sarah K.", text: "Had PPF fitted on my new Range Rover and the peace of mind is worth every penny. Professional team, clean workshop. 10/10." },
-    { name: "Tom B.",   text: "The ceramic coating has made washing the car so much easier — water just beads off. The gloss depth is incredible. SBN are the real deal." },
-    { name: "Priya S.", text: "Amazing service from start to finish. The tints look factory-fitted, perfect edges, no bubbles. Great value for money." }
+/* ---------- reviews marquee (home) ---------- */
+const track = $("#reviewsTrack");
+if (track) {
+  const REVIEWS = [
+    { name: "James M.", tag: "Ceramic Coating", text: "Absolutely blown away by the finish. The team at SBN took my brief and executed it perfectly. The ceramic coating is flawless and they detailed the car before handing it back." },
+    { name: "Sarah K.", tag: "PPF · Range Rover", text: "Had PPF fitted on my new Range Rover and the peace of mind is worth every penny. Professional team, clean workshop. 10/10." },
+    { name: "Tom B.",   tag: "Ceramic Coating", text: "The ceramic coating has made washing the car so much easier — water just beads off. The gloss depth is incredible. SBN are the real deal." },
+    { name: "Priya S.", tag: "Window Tint", text: "Amazing service from start to finish. The tints look factory-fitted, perfect edges, no bubbles. Great value for money." }
   ];
-  const star = '<svg width="16" height="16"><use href="#i-star"/></svg>';
-  tgrid.innerHTML = TESTIMONIALS.map((t, i) => `
-    <div class="tcard reveal d${i % 2}">
-      <span class="qmark">&ldquo;</span>
-      <div class="stars">${star.repeat(5)}</div>
-      <blockquote>&ldquo;${t.text}&rdquo;</blockquote>
-      <div class="who"><span class="avatar">${t.name[0]}</span>${t.name}</div>
-    </div>`).join("");
+  const star = '<svg width="15" height="15"><use href="#i-star"/></svg>';
+  const card = r => `<div class="tcard"><div class="stars">${star.repeat(5)}</div><blockquote>&ldquo;${r.text}&rdquo;</blockquote>
+    <div class="who"><span class="avatar">${r.name[0]}</span><span>${r.name}<small>${r.tag}</small></span></div></div>`;
+  // repeated so the marquee loops seamlessly (the track scrolls by half its width)
+  track.innerHTML = [...REVIEWS, ...REVIEWS, ...REVIEWS, ...REVIEWS].map(card).join("");
+}
+
+/* ---------- gallery strip: arrows + drag to scroll ---------- */
+const strip = $("#strip");
+if (strip) {
+  $$("[data-strip]").forEach(b => b.addEventListener("click", () => strip.scrollBy({ left: +b.dataset.strip * strip.clientWidth * 0.8, behavior: "smooth" })));
+  let down = false, x0 = 0, s0 = 0;
+  strip.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") return; down = true; x0 = e.clientX; s0 = strip.scrollLeft; strip.classList.add("drag"); });
+  addEventListener("pointermove", e => { if (down) strip.scrollLeft = s0 - (e.clientX - x0); });
+  addEventListener("pointerup", () => { down = false; strip.classList.remove("drag"); });
 }
 $$(".reveal").forEach(el => io.observe(el));
 
@@ -92,6 +99,7 @@ function goStep(name) { $$(".m-step").forEach(s => s.classList.toggle("active", 
 function openModal(step = "pick") { goStep(step); document.body.classList.add("modal-open"); document.documentElement.style.overflow = "hidden"; }
 function closeModal() { document.body.classList.remove("modal-open"); document.documentElement.style.overflow = ""; if (frame) frame.removeAttribute("src"); }
 function book(key) { const b = BOOKING[key]; $("#bookTitle").textContent = b.title; frame.src = b.url; openModal("book"); }
+window.SBN = { book, openModal, closeModal };
 
 $$("[data-open-modal]").forEach(b => b.addEventListener("click", () => openModal(b.dataset.openModal || "pick")));
 $$("[data-go]").forEach(b => b.addEventListener("click", () => goStep(b.dataset.go)));

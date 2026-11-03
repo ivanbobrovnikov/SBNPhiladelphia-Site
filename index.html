@@ -13,7 +13,7 @@
 <link rel="icon" href="assets/img/logo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="assets/site.css" />
 <!-- Tracking: paste your Google Tag Manager snippet here (GTM-N9CVL9ZD) -->
 </head>
@@ -49,304 +49,224 @@
       <div class="logo-img"><img src="assets/img/logo.png" alt="SBN Auto Styling" /></div>
       <span class="logo-text">SBN <span class="blue">Auto Styling</span></span>
     </a>
-    <nav class="nav"><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#about">About</a><a href="#testimonials">Testimonials</a><a href="#location">Location</a><a href="#contact">Contact</a><a href="blog/">Blog</a>
-      <button class="btn btn-primary btn-sm" data-open-modal>Get a Quote</button>
+    <nav class="nav"><a href="#studio">Studio</a><a href="#services">Services</a><a href="#pricing">Pricing</a><a href="#gallery">Work</a><a href="#testimonials">Reviews</a><a href="#visit">Visit</a><a href="blog/">Blog</a>
+      <button class="btn btn-primary btn-sm" data-open-modal>Book now</button>
     </nav>
-    <button class="burger" id="burger" aria-label="Open menu"><svg width="26" height="26"><use href="#i-menu"/></svg></button>
+    <button class="burger" id="burger" aria-label="Open menu"><svg width="22" height="22"><use href="#i-menu"/></svg></button>
   </div>
-  <div class="mobile-menu" id="mobileMenu"><a class="link" href="#services">Services</a><a class="link" href="#gallery">Gallery</a><a class="link" href="#about">About</a><a class="link" href="#testimonials">Testimonials</a><a class="link" href="#location">Location</a><a class="link" href="#contact">Contact</a><a class="link" href="blog/">Blog</a>
-    <button class="btn btn-primary btn-md" data-open-modal>Get a Quote</button>
+  <div class="mobile-menu" id="mobileMenu"><a class="link" href="#studio">Studio</a><a class="link" href="#services">Services</a><a class="link" href="#pricing">Pricing</a><a class="link" href="#gallery">Work</a><a class="link" href="#testimonials">Reviews</a><a class="link" href="#visit">Visit</a><a class="link" href="blog/">Blog</a>
+    <button class="btn btn-primary btn-md" data-open-modal>Book now</button>
   </div>
 </header>
 <main>
 <!-- ===================== HERO ===================== -->
 <section id="hero" class="hero">
   <div class="hero-bg" id="heroBg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-glow"></div>
+  <div class="hero-streak"></div>
   <div class="hero-content">
-    <span class="badge reveal">Premium Auto Styling</span>
-    <h1 class="h-display reveal d1">Transform<span class="l2">Your Ride</span></h1>
-    <p class="sub reveal d2">SBN Auto Styling delivers world-class vehicle wraps, paint protection film, ceramic coatings and custom detailing — engineered to turn heads and protect your investment.</p>
-    <div class="hero-ctas reveal d3">
-      <button class="btn btn-primary btn-lg" data-open-modal>Get a Free Quote <svg class="arrow" width="18" height="18"><use href="#i-arrow"/></svg></button>
-      <a class="btn btn-outline btn-lg" href="#services">Explore Services</a>
-    </div>
-    <div class="stats reveal d3">
-      <div class="stat"><b>500+</b><span>Vehicles Styled</span></div>
-      <div class="stat"><b>10+</b><span>Years Experience</span></div>
-      <div class="stat"><b>5★</b><span>Average Rating</span></div>
-      <div class="stat"><b>100%</b><span>Satisfaction Guaranteed</span></div>
+    <span class="eyebrow reveal">Philadelphia · Tint · Ceramic · PPF</span>
+    <h1 class="h-display reveal d1"><span>Tint it.</span><span class="grad">Coat it.</span><span class="outline">Protect it.</span></h1>
+    <div class="hero-row">
+      <div class="reveal d2">
+        <p class="sub">Ceramic window tint, 10-year ceramic coating and self-healing paint protection film, installed by certified specialists in Northeast Philly. Preview your tint before you book.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary btn-lg" href="#studio" data-studio-open="tint">Try the tint visualizer <svg class="arrow" width="18" height="18"><use href="#i-arrow"/></svg></a>
+          <button class="btn btn-outline btn-lg" data-open-modal>Book now</button>
+        </div>
+      </div>
+      <div class="trust reveal d3">
+        <div><b>5.0<span class="blue">★</span></b><span>200+ Google reviews</span></div>
+        <div><b>500+</b><span>Cars protected</span></div>
+        <div><b>10yr</b><span>Ceramic protection</span></div>
+      </div>
     </div>
   </div>
-  <a href="#services" class="scroll-ind" aria-label="Scroll down"></a>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="marquee-track">
+  <span>Nano ceramic tint</span><span>10-year ceramic coating</span><span>Self-healing PPF</span><span>PA street-legal</span><span>Lifetime tint warranty</span><span>3M &amp; Avery certified</span>
+  <span>Nano ceramic tint</span><span>10-year ceramic coating</span><span>Self-healing PPF</span><span>PA street-legal</span><span>Lifetime tint warranty</span><span>3M &amp; Avery certified</span>
+</div></div>
+
+<!-- ===================== STUDIO ===================== -->
+<section id="studio">
+  <div class="container">
+    <div class="sec-head">
+      <div><span class="badge reveal">SBN Studio</span><h2 class="h-display h2 reveal">Build your<br/><span class="grad">look.</span></h2></div>
+      <p class="lead reveal">Pick your vehicle and see exactly how dark 5% vs 35% looks. Drag to compare ceramic. Tap to see what each PPF package covers.</p>
+    </div>
+    <div data-studio-tabs></div>
+  </div>
 </section>
 
 <!-- ===================== SERVICES ===================== -->
-<section id="services" class="bg-glow">
+<section id="services" style="padding-top:2rem">
   <div class="container">
-    <span class="badge reveal">What We Do</span>
-    <h2 class="h-display h2 reveal">Our Services</h2>
-    <p class="lead reveal">Every service is performed by trained specialists using premium materials, backed by our craftsmanship guarantee.</p>
-    <div class="cards3">
-      <article class="svc reveal">
-        <div class="svc-img"><img src="assets/img/service-ppf.png" alt="Paint Protection Film" /><div class="svc-icon"><svg width="20" height="20"><use href="#i-shield"/></svg></div></div>
-        <div class="svc-body"><h3>Paint Protection Film</h3>
-          <p>Self-healing PPF creates an invisible barrier against stone chips, scratches, bug acids, and UV damage — keeping your paint perfect for years.</p>
-          <a href="#pricing" class="link-more" data-tab="ppf">View Packages <svg width="16" height="16"><use href="#i-chev"/></svg></a></div>
-      </article>
-      <article class="svc popular reveal d1">
-        <div class="svc-img"><img src="assets/img/service-ceramic.png" alt="Ceramic Coating" /><span class="pill-pop">Most Popular</span><div class="svc-icon"><svg width="20" height="20"><use href="#i-sparkles"/></svg></div></div>
-        <div class="svc-body"><h3>Ceramic Coating</h3>
-          <p>Nano-ceramic technology chemically bonds to your paint for a glass-like shield that repels water, dirt, and contaminants year after year.</p>
-          <a href="#pricing" class="link-more" data-tab="ceramic">View Packages <svg width="16" height="16"><use href="#i-chev"/></svg></a></div>
-      </article>
-      <article class="svc reveal d2">
-        <div class="svc-img"><img src="assets/img/service-window-tint.png" alt="Window Tinting" /><div class="svc-icon"><svg width="20" height="20"><use href="#i-eye"/></svg></div></div>
-        <div class="svc-body"><h3>Window Tinting</h3>
-          <p>Premium window films for maximum heat rejection, UV protection, privacy and style. Pennsylvania-legal tint percentages available.</p>
-          <a href="#pricing" class="link-more" data-tab="tint">View Packages <svg width="16" height="16"><use href="#i-chev"/></svg></a></div>
-      </article>
+    <div class="sec-head">
+      <div><span class="badge reveal">What we do</span><h2 class="h-display h2 reveal">Three ways to<br/>protect your car.</h2></div>
+      <p class="lead reveal">Every job is done in-house by trained specialists using premium film and coatings, backed by our craftsmanship guarantee.</p>
+    </div>
+    <div class="svc-grid">
+      <a class="svc-card reveal" href="services/window-tinting/">
+        <img src="assets/img/service-window-tint.png" alt="Window tint installation" loading="lazy"/>
+        <span class="num">01</span><span class="pill sale">SALE</span>
+        <h3>Window<br/>Tinting</h3>
+        <p>Ceramic &amp; nano ceramic film. Blocks 99% UV, kills the heat, and stays street-legal in Pennsylvania.</p>
+        <div class="from"><span>From <b>$299</b></span><span class="go"><svg width="18" height="18"><use href="#i-arrow"/></svg></span></div>
+      </a>
+      <a class="svc-card reveal d1" href="services/ceramic-coating/">
+        <img src="assets/img/service-ceramic.png" alt="Ceramic coating application" loading="lazy"/>
+        <span class="num">02</span><span class="pill">MOST POPULAR</span>
+        <h3>Ceramic<br/>Coating</h3>
+        <p>A glass-hard nano-ceramic layer bonded to your paint. Insane gloss, water beads off, washing takes half the time.</p>
+        <div class="from"><span><s style="color:var(--dim)">$2,195</s> <b>$499</b></span><span class="go"><svg width="18" height="18"><use href="#i-arrow"/></svg></span></div>
+      </a>
+      <a class="svc-card reveal d2" href="services/ppf/">
+        <img src="assets/img/service-ppf.png" alt="Paint protection film installation" loading="lazy"/>
+        <span class="num">03</span>
+        <h3>Paint Protection<br/>Film</h3>
+        <p>Invisible, self-healing armor against rock chips, scratches and road salt. Every job is fitted to your car in person.</p>
+        <div class="from"><span><b>Free</b> estimate</span><span class="go"><svg width="18" height="18"><use href="#i-arrow"/></svg></span></div>
+      </a>
     </div>
   </div>
 </section>
 
 <!-- ===================== PRICING ===================== -->
-<section id="pricing">
+<section id="pricing" style="padding-top:2rem">
   <div class="container">
-    <span class="badge reveal">Pricing</span>
-    <h2 class="h-display h2 reveal">Choose Your Package</h2>
-    <p class="lead reveal">Upfront pricing with no hidden fees. Every package includes a free consultation and design preview.</p>
-
-    <div class="tabs reveal" role="tablist">
-      <button class="tab" data-tab-btn="ppf"><svg width="16" height="16"><use href="#i-shield"/></svg>Paint Protection Film</button>
-      <button class="tab active" data-tab-btn="ceramic"><svg width="16" height="16"><use href="#i-sparkles"/></svg>Ceramic Coating</button>
-      <button class="tab" data-tab-btn="tint"><svg width="16" height="16"><use href="#i-eye"/></svg>Window Tinting</button>
+    <div class="sec-head">
+      <div><span class="badge reveal">Pricing</span><h2 class="h-display h2 reveal">No hidden fees.<br/><span class="outline">Ever.</span></h2></div>
+      <p class="lead reveal">Sale pricing on tint and ceramic right now. PPF is always quoted in person, free.</p>
     </div>
-
-    <!-- PPF -->
-    <div class="tab-panel" data-panel="ppf">
-      <div class="ppf-panel">
-        <div class="bar"></div>
-        <div class="ppf-grid">
-          <div>
-            <div class="k">Why In-Person?</div>
-            <ul class="feat">
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Every car is different — we measure and assess yours directly</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>We cover front bumper, full front end, or full body options</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Walk through film choices and coverage zones with our team</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>No obligation — just an honest quote in 20–30 minutes</li>
-            </ul>
-          </div>
-          <div>
-            <div class="k">100% Free · No Pressure</div>
-            <h3>Schedule Your Free PPF Estimate</h3>
-            <a class="btn btn-primary btn-md" href="tel:+12672637342"><svg width="16" height="16"><use href="#i-sparkles"/></svg>Book My Estimate</a>
-            <a class="learn" href="services/ppf/">Learn more about PPF →</a>
-          </div>
-        </div>
-      </div>
+    <div class="price-grid">
+      <div class="plan reveal"><div class="plan-body">
+        <div class="plan-head"><span class="plan-name">Ceramic Tint</span><span class="sale">Sale</span></div>
+        <div class="was">$499</div><div class="price">$299</div><div class="today">Book today's price</div>
+        <ul class="feat"><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Sides &amp; rear windows</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Blocks up to 99% UV</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Reduces heat &amp; glare</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Lifetime warranty</li></ul>
+        <button class="btn btn-outline" data-book="tint">Book now</button>
+      </div></div>
+      <div class="plan featured reveal d1"><div class="plan-top">★ BEST TINT</div><div class="plan-body">
+        <div class="plan-head"><span class="plan-name">Nano Ceramic Tint</span><span class="sale">Sale</span></div>
+        <div class="was">$599</div><div class="price">$399</div><div class="today">Book today's price</div>
+        <ul class="feat"><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Sides &amp; rear windows</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Maximum IR heat rejection</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>No GPS / Bluetooth interference</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Lifetime warranty</li></ul>
+        <button class="btn btn-primary" data-book="tint">Book now <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
+      </div></div>
+      <div class="plan featured reveal d2"><div class="plan-top">★ MOST POPULAR</div><div class="plan-body">
+        <div class="plan-head"><span class="plan-name">10-Year Ceramic</span><span class="sale">Sale</span></div>
+        <div class="was">$2,195</div><div class="price">$499</div><div class="today">Book today's price</div>
+        <ul class="feat"><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Wash, iron decon &amp; clay bar</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Paint enhancement</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>10-year ceramic coating</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>8–10 hour install</li></ul>
+        <button class="btn btn-primary" data-book="ceramic">Book now <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
+      </div></div>
+      <div class="plan reveal d3"><div class="plan-body">
+        <div class="plan-head"><span class="plan-name">Paint Protection Film</span><span class="tag free">Free</span></div>
+        <div class="was" style="text-decoration:none">In-person estimate</div><div class="price">Free</div><div class="today" style="color:var(--ok)">No obligation</div>
+        <ul class="feat"><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Bumper, full front or full body</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>3M &amp; Avery Dennison film</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Self-healing topcoat</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>20–30 minute walkthrough</li></ul>
+        <a class="btn btn-outline" href="tel:+12672637342">Call to book</a>
+      </div></div>
     </div>
-
-    <!-- CERAMIC -->
-    <div class="tab-panel active" data-panel="ceramic">
-      <div class="plans">
-        <div class="plan featured">
-          <div class="plan-top">★ MOST POPULAR</div>
-          <div class="plan-body">
-            <div class="plan-head"><span class="plan-name">10 Year Ceramic Coating</span><span class="sale">Sale</span></div>
-            <div class="was">$2,195</div><div class="price">$499</div><div class="today">Book today's price</div>
-            <ul class="feat">
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Exterior wash</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Iron decontamination</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Clay bar</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Paint enhancement</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>10 year ceramic coating</li>
-            </ul>
-            <button class="btn btn-primary" data-book="ceramic">Book Now <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TINT -->
-    <div class="tab-panel" data-panel="tint">
-      <div class="plans">
-        <div class="plan">
-          <div class="plan-body">
-            <div class="plan-head"><span class="plan-name">Ceramic Window Tint</span><span class="sale">Sale</span></div>
-            <div class="was">$499</div><div class="price">$299</div><div class="today">Book today's price</div>
-            <ul class="feat">
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Sides &amp; rear windows</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Ceramic tint film</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Blocks up to 99% UV rays</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Reduces heat &amp; glare</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Lifetime warranty</li>
-            </ul>
-            <button class="btn btn-white" data-book="tint">Book Now <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
-          </div>
-        </div>
-        <div class="plan featured">
-          <div class="plan-top">★ MOST POPULAR</div>
-          <div class="plan-body">
-            <div class="plan-head"><span class="plan-name">Nano Ceramic Tint</span><span class="sale">Sale</span></div>
-            <div class="was">$599</div><div class="price">$399</div><div class="today">Book today's price</div>
-            <ul class="feat">
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Sides &amp; rear windows</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Nano ceramic film</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Maximum IR heat rejection</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>No signal interference</li>
-              <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Lifetime warranty</li>
-            </ul>
-            <button class="btn btn-primary" data-book="tint">Book Now <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <p class="note" id="pricingNote">Prices may vary by vehicle make, model &amp; condition. <a href="#contact">Contact us</a> for an exact quote — always free.</p>
+    <p class="note">Prices may vary by vehicle make, model &amp; condition. <a href="#visit">Contact us</a> for an exact quote, always free.</p>
     <p class="nonref">All deposits are non-refundable.</p>
   </div>
 </section>
 
-<!-- ===================== GALLERY ===================== -->
-<section id="gallery">
+<!-- ===================== WHY SBN (bento) ===================== -->
+<section id="about" style="padding-top:2rem">
   <div class="container">
-    <span class="badge reveal">Our Work</span>
-    <h2 class="h-display h2 reveal">Gallery</h2>
-    <div class="gal">
-      <div class="gal-item big reveal"><img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80" alt="Gloss Wrap" loading="lazy"/><span class="gal-tag">Gloss Wrap</span></div>
-      <div class="gal-item reveal d1"><img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&q=80" alt="Satin Black" loading="lazy"/><span class="gal-tag">Satin Black</span></div>
-      <div class="gal-item reveal d2"><img src="https://images.unsplash.com/photo-1514316454349-750a7fd3da3a?w=800&q=80" alt="PPF" loading="lazy"/><span class="gal-tag">PPF</span></div>
-      <div class="gal-item reveal d1"><img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&q=80" alt="Ceramic Coat" loading="lazy"/><span class="gal-tag">Ceramic Coat</span></div>
-      <div class="gal-item reveal d2"><img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80" alt="Custom Livery" loading="lazy"/><span class="gal-tag">Custom Livery</span></div>
-      <div class="gal-item reveal"><img src="https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=800&q=80" alt="Window Tint" loading="lazy"/><span class="gal-tag">Window Tint</span></div>
+    <div class="sec-head">
+      <div><span class="badge reveal">Why SBN</span><h2 class="h-display h2 reveal">Built for<br/><span class="grad">perfection.</span></h2></div>
+      <p class="lead reveal">We started SBN to bring proper, high-end protection work to Philly. Precision installs, honest advice and no upsell games.</p>
+    </div>
+    <div class="bento">
+      <div class="cell img w2 h2 reveal"><img src="assets/img/about-hero.png" alt="PPF installation on a red sports car" loading="lazy"/>
+        <div class="cap"><h3>Certified installers</h3><p>3M &amp; Avery Dennison trained. Every edge wrapped, every panel prepped.</p></div></div>
+      <div class="cell blue-cell reveal d1"><div class="stars"><svg width="18" height="18"><use href="#i-star"/></svg><svg width="18" height="18"><use href="#i-star"/></svg><svg width="18" height="18"><use href="#i-star"/></svg><svg width="18" height="18"><use href="#i-star"/></svg><svg width="18" height="18"><use href="#i-star"/></svg></div><div><div class="big">5.0</div><p>200+ Google reviews</p></div></div>
+      <div class="cell reveal d2"><span class="ic"><svg width="20" height="20"><use href="#i-cal"/></svg></span><div><h3>Same-week slots</h3><p>Most jobs booked within days, not weeks.</p></div></div>
+      <div class="cell reveal d1"><span class="ic"><svg width="20" height="20"><use href="#i-shield"/></svg></span><div><h3>Lifetime tint warranty</h3><p>No bubbling, peeling or purple fade. Ever.</p></div></div>
+      <div class="cell reveal d2"><div class="big" data-count="500" data-suffix="+">0</div><p>Vehicles styled across Philly &amp; Bucks County</p></div>
     </div>
   </div>
 </section>
-<div class="lightbox" id="lightbox"><button aria-label="Close"><svg width="20" height="20"><use href="#i-x"/></svg></button><img alt="" /></div>
 
-<!-- ===================== ABOUT ===================== -->
-<section id="about" class="bg-glow">
+<!-- ===================== WORK ===================== -->
+<section id="gallery" style="padding-top:2rem">
   <div class="container">
-    <div class="about">
-      <div class="about-img reveal">
-        <div class="frame"><img src="assets/img/about-hero.png" alt="PPF installation at SBN Auto Styling" /></div>
-        <div class="rating-card"><div class="ic"><svg width="20" height="20"><use href="#i-star"/></svg></div><div><b>5.0 ★</b><small>200+ Google Reviews</small></div></div>
-      </div>
-      <div class="reveal d1">
-        <span class="badge">About Us</span>
-        <h2 class="h-display h2">Built For<br/><span class="blue">Perfection</span></h2>
-        <p>SBN Auto Styling was founded with one mission — to deliver the highest quality vehicle customization in the Philadelphia area. Our team of certified specialists combines technical precision with an eye for design, giving every car the treatment it deserves.</p>
-        <p>Whether you're looking to protect your brand-new supercar with PPF, give your daily driver a bold new look, or brand your business fleet — we've got you covered.</p>
-        <ul class="about-list">
-          <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>3M &amp; Avery Dennison certified installers</li>
-          <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Full color-change wraps from $999</li>
-          <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>12-month workmanship warranty</li>
-          <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Free consultation &amp; design preview</li>
-          <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Collection &amp; delivery available</li>
-          <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Fleet pricing for businesses</li>
-        </ul>
-        <button class="btn btn-primary btn-md" data-open-modal>Talk to Our Team <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
-      </div>
+    <div class="sec-head">
+      <div><span class="badge reveal">Our work</span><h2 class="h-display h2 reveal">Fresh out<br/>the bay.</h2></div>
+      <div class="strip-nav"><button data-strip="-1" aria-label="Previous"><svg width="18" height="18"><use href="#i-chevl"/></svg></button><button data-strip="1" aria-label="Next"><svg width="18" height="18"><use href="#i-chev"/></svg></button></div>
     </div>
-    <div class="counters">
-      <div class="counter reveal"><div class="ic"><svg width="22" height="22"><use href="#i-car"/></svg></div><b data-count="500" data-suffix="+">0</b><span>Vehicles Transformed</span></div>
-      <div class="counter reveal d1"><div class="ic"><svg width="22" height="22"><use href="#i-award"/></svg></div><b data-count="10" data-suffix="+">0</b><span>Years in Business</span></div>
-      <div class="counter reveal d2"><div class="ic"><svg width="22" height="22"><use href="#i-star"/></svg></div><b data-count="200" data-suffix="+">0</b><span>5-Star Reviews</span></div>
-      <div class="counter reveal d3"><div class="ic"><svg width="22" height="22"><use href="#i-users"/></svg></div><b data-count="15" data-suffix="+">0</b><span>Brands Trusted</span></div>
+    <div class="strip" id="strip">
+      <div class="shot"><img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=900&q=80" alt="White hypercar, gloss finish" loading="lazy"/><span>Gloss finish</span></div>
+      <div class="shot"><img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=900&q=80" alt="Red Mercedes-AMG GT" loading="lazy"/><span>Ceramic coat</span></div>
+      <div class="shot"><img src="https://images.unsplash.com/photo-1514316454349-750a7fd3da3a?w=900&q=80" alt="Mercedes front end with stripe" loading="lazy"/><span>PPF</span></div>
+      <div class="shot"><img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=900&q=80" alt="Camaro in a dark garage" loading="lazy"/><span>Satin black</span></div>
+      <div class="shot"><img src="https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=900&q=80" alt="Black Porsche 911 GT3" loading="lazy"/><span>Window tint</span></div>
+      <div class="shot"><img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=900&q=80" alt="Nissan GT-R on an open road" loading="lazy"/><span>Full front PPF</span></div>
     </div>
   </div>
 </section>
 
 <!-- ===================== PROCESS ===================== -->
-<section id="process">
+<section id="process" style="padding-top:2rem">
   <div class="container">
-    <span class="badge reveal">How It Works</span>
-    <h2 class="h-display h2 reveal">Simple Process</h2>
+    <div class="sec-head"><div><span class="badge reveal">How it works</span><h2 class="h-display h2 reveal">Four steps.<br/>Zero stress.</h2></div></div>
     <div class="steps">
-      <div class="step reveal"><div class="num">01</div><h3>Book Your Appointment</h3><p>Choose your service and pick a time that works for you. Same-week slots available for most jobs.</p></div>
-      <div class="step reveal d1"><div class="num">02</div><h3>Secure Your Spot</h3><p>Pay upfront to lock in your appointment. Simple, transparent pricing — no hidden fees, ever.</p></div>
-      <div class="step reveal d2"><div class="num">03</div><h3>We Handle Everything</h3><p>Drop your car off and let our certified specialists get to work. Precision installs every time.</p></div>
-      <div class="step reveal d3"><div class="num">04</div><h3>Drive Away Protected</h3><p>Pick up your freshly treated vehicle, aftercare tips in hand. The results speak for themselves.</p></div>
+      <div class="step reveal"><div class="num">01</div><h3>Book your appointment</h3><p>Pick your service and a time that works. Same-week slots for most jobs.</p></div>
+      <div class="step reveal d1"><div class="num">02</div><h3>Secure your spot</h3><p>Lock it in upfront. Transparent pricing, no hidden fees, ever.</p></div>
+      <div class="step reveal d2"><div class="num">03</div><h3>We handle everything</h3><p>Drop off and our certified specialists get to work. Precision every time.</p></div>
+      <div class="step reveal d3"><div class="num">04</div><h3>Drive away protected</h3><p>Pick up with aftercare tips in hand. The results speak for themselves.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ===================== TESTIMONIALS ===================== -->
-<section id="testimonials">
-  <div class="container">
-    <span class="badge reveal">Reviews</span>
-    <h2 class="h-display h2 reveal">What Clients Say</h2>
-    <div class="tgrid" id="tgrid"></div>
-  </div>
+<!-- ===================== REVIEWS ===================== -->
+<section id="testimonials" style="padding-top:2rem">
+  <div class="container"><div class="sec-head"><div><span class="badge reveal">Reviews</span><h2 class="h-display h2 reveal">Don't take<br/><span class="grad">our word.</span></h2></div></div></div>
+  <div class="reviews"><div class="reviews-track" id="reviewsTrack"></div></div>
 </section>
 
-<!-- ===================== CTA BANNER ===================== -->
-<section id="cta">
-  <div class="container">
-    <div class="cta-box reveal">
-      <div class="cta-copy">
-        <h2 class="h-display">Ready to<br/>Stand Out?</h2>
-        <p>Get in touch today for a free, no-obligation quote. Transform your vehicle with SBN's award-winning team.</p>
-        <div class="cta-btns">
-          <button class="btn btn-white btn-md" data-open-modal>Get a Free Quote <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
-          <a class="btn btn-ghost btn-md" href="tel:+12672637342"><svg width="16" height="16"><use href="#i-phone"/></svg>267 263 7342</a>
-        </div>
-      </div>
-      <div class="cta-img"></div>
+<!-- ===================== FAQ ===================== -->
+<section id="faq" style="padding-top:2rem">
+  <div class="container faq-wrap">
+    <div><span class="badge reveal">FAQ</span><h2 class="h-display h2 reveal">Real<br/>answers.</h2><p class="lead reveal">Still unsure? Call <a class="blue" href="tel:+12672637342">267 263 7342</a>. We'll tell you honestly what your car needs.</p></div>
+    <div class="faq reveal">
+      <details><summary>What tint percentage is legal in Pennsylvania?</summary><p>Front side windows must let in at least 70% of light (70% VLT). Rear side windows and the rear windshield can be any darkness. We always install PA-legal tint, so you'll never fail inspection because of our work.</p></details>
+      <details><summary>What's the difference between ceramic and nano ceramic tint?</summary><p>Both block 99% of UV. Nano ceramic uses a finer particle matrix for maximum infrared heat rejection (about 50–60% vs 40–45%) and never interferes with GPS, Bluetooth, cell signal or E-ZPass.</p></details>
+      <details><summary>Is ceramic coating worth it over wax?</summary><p>Wax lasts weeks. Our ceramic coating chemically bonds to your clear coat for up to 10 years, repels water, salt and bird droppings, and makes washing dramatically easier. If you're keeping your car 2+ years, it wins easily.</p></details>
+      <details><summary>Do I need PPF or ceramic coating?</summary><p>They solve different problems. PPF is a physical film that stops rock chips. Ceramic is a chemical layer for gloss, UV and easy cleaning. Many customers do PPF on the front end and ceramic over the whole car.</p></details>
+      <details><summary>How long does each service take?</summary><p>Window tint takes about 2–3 hours. Ceramic coating takes 8–10 hours. PPF takes 1–3 days depending on coverage. We'll give you an exact timeline when you book.</p></details>
     </div>
   </div>
 </section>
 
-<!-- ===================== LOCATION ===================== -->
-<section id="location" class="bg-glow">
+<!-- ===================== VISIT ===================== -->
+<section id="visit" style="padding-top:2rem">
   <div class="container">
-    <span class="badge reveal">Visit the Shop</span>
-    <h2 class="h-display h2 reveal">Find Us</h2>
-    <p class="lead reveal">Our Northeast Philadelphia shop is minutes from Roosevelt Blvd and a short drive from most of Bucks County. Stop by for a free walkthrough and quote.</p>
-    <div class="loc">
+    <div class="sec-head">
+      <div><span class="badge reveal">Visit the shop</span><h2 class="h-display h2 reveal">Find us.</h2></div>
+      <p class="lead reveal">Minutes from Roosevelt Blvd and a short drive from most of Bucks County. Stop by for a free walkthrough and quote.</p>
+    </div>
+    <div class="loc" id="location">
       <div class="loc-card reveal">
-        <div class="loc-row"><div class="ic"><svg width="20" height="20"><use href="#i-pin"/></svg></div>
-          <div><div class="k-label">Address</div><div class="val">100 Red Lion Road, Unit 3<br/>Philadelphia, PA 19115</div></div></div>
-        <div class="loc-row"><div class="ic"><svg width="20" height="20"><use href="#i-clock"/></svg></div>
-          <div style="flex:1"><div class="k-label">Hours</div>
-            <div class="hours"><span>Mon – Fri</span><b>8:00 AM – 6:00 PM</b><span>Saturday</span><b>8:00 AM – 5:00 PM</b><span>Sunday</span><b>Closed</b></div></div></div>
-        <div class="k-label">Areas We Serve</div>
-        <ul class="areas">
-          <li><svg class="check" width="14" height="14"><use href="#i-check"/></svg>Philadelphia</li>
-          <li><svg class="check" width="14" height="14"><use href="#i-check"/></svg>Northeast Philly</li>
-          <li><svg class="check" width="14" height="14"><use href="#i-check"/></svg>Bensalem</li>
-          <li><svg class="check" width="14" height="14"><use href="#i-check"/></svg>Feasterville</li>
-          <li><svg class="check" width="14" height="14"><use href="#i-check"/></svg>Langhorne</li>
-          <li><svg class="check" width="14" height="14"><use href="#i-check"/></svg>Warminster</li>
-          <li><svg class="check" width="14" height="14"><use href="#i-check"/></svg>Levittown</li>
-          <li><svg class="check" width="14" height="14"><use href="#i-check"/></svg>Huntingdon Valley</li>
-        </ul>
-        <a class="btn btn-primary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=100%20Red%20Lion%20Road%2C%20Unit%203%2C%20Philadelphia%2C%20PA%2019115"><svg width="16" height="16"><use href="#i-nav"/></svg>Get Directions</a>
+        <div><div class="k-label">Address</div><div class="val">100 Red Lion Road, Unit 3<br/>Philadelphia, PA 19115</div></div>
+        <div><div class="k-label">Hours</div><div class="hours"><span>Mon – Fri</span><b>8:00 AM – 6:00 PM</b><span>Saturday</span><b>8:00 AM – 5:00 PM</b><span>Sunday</span><b>Closed</b></div></div>
+        <div><div class="k-label">Areas we serve</div><ul class="areas"><li>Philadelphia</li><li>Northeast Philly</li><li>Bensalem</li><li>Feasterville</li><li>Langhorne</li><li>Warminster</li><li>Levittown</li><li>Huntingdon Valley</li></ul></div>
+        <a class="btn btn-primary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=100%20Red%20Lion%20Road%2C%20Unit%203%2C%20Philadelphia%2C%20PA%2019115"><svg width="16" height="16"><use href="#i-nav"/></svg>Get directions</a>
       </div>
-      <div class="map reveal d1">
-        <iframe loading="lazy" title="SBN Auto Styling location" src="https://www.google.com/maps?q=100%20Red%20Lion%20Road%2C%20Unit%203%2C%20Philadelphia%2C%20PA%2019115&z=13&output=embed"></iframe>
-      </div>
+      <div class="map reveal d1"><iframe loading="lazy" title="SBN Auto Styling location" src="https://www.google.com/maps?q=100%20Red%20Lion%20Road%2C%20Unit%203%2C%20Philadelphia%2C%20PA%2019115&z=13&output=embed"></iframe></div>
     </div>
   </div>
 </section>
 
-<!-- ===================== CONTACT ===================== -->
-<section id="contact">
+<!-- ===================== FINAL CTA ===================== -->
+<section class="final" id="contact">
+  <div class="glow"></div>
   <div class="container">
-    <span class="badge reveal">Get in Touch</span>
-    <h2 class="h-display h2 reveal">Get a Free<br/><span class="blue">Quote</span></h2>
-    <p class="lead reveal">Tell us what you're looking for. Pick your service, choose a package, and book your spot — all in under 60 seconds.</p>
-    <button class="btn btn-primary btn-md reveal" data-open-modal>Get a Free Quote <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
-    <div class="contact-row reveal">
-      <a class="ci" href="tel:+12672637342"><div class="ic"><svg width="18" height="18"><use href="#i-phone"/></svg></div><div><small>Call Us</small><b>267 263 7342</b></div></a>
-      <div class="ci"><div class="ic"><svg width="18" height="18"><use href="#i-pin"/></svg></div><div><small>Location</small><b>100 Red Lion Rd, Unit 3, Philadelphia PA</b></div></div>
-      <div class="socials">
-        <a href="https://www.instagram.com/sbnautostyling" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18"><use href="#i-insta"/></svg></a>
-        <a href="https://www.facebook.com/profile.php?id=61586524292167" target="_blank" rel="noopener" aria-label="Facebook"><svg width="18" height="18"><use href="#i-fb"/></svg></a>
-      </div>
-    </div>
+    <span class="badge reveal" style="justify-content:center">Get a free quote</span>
+    <h2 class="h-display reveal">Ready when<br/><span class="grad">you are.</span></h2>
+    <p class="lead reveal" style="margin:1.5rem auto 0">Pick your service, choose a package and lock your spot in under 60 seconds.</p>
+    <div class="btns reveal"><button class="btn btn-primary btn-lg" data-open-modal>Book now <svg class="arrow" width="18" height="18"><use href="#i-arrow"/></svg></button><a class="btn btn-outline btn-lg" href="tel:+12672637342"><svg width="16" height="16"><use href="#i-phone"/></svg>267 263 7342</a></div>
+    <div class="contact-row reveal"><span><svg width="14" height="14"><use href="#i-pin"/></svg>100 Red Lion Rd, Unit 3, Philadelphia PA</span><a href="https://www.instagram.com/sbnautostyling" target="_blank" rel="noopener"><svg width="14" height="14"><use href="#i-insta"/></svg>@sbnautostyling</a><a href="https://www.facebook.com/profile.php?id=61586524292167" target="_blank" rel="noopener"><svg width="14" height="14"><use href="#i-fb"/></svg>Facebook</a></div>
   </div>
 </section>
 
@@ -356,23 +276,32 @@
     <div class="foot">
       <div>
         <a href="./" class="logo"><div class="logo-img"><img src="assets/img/logo.png" alt="SBN"/></div><span class="logo-text" style="display:inline">SBN <span class="blue">Auto Styling</span></span></a>
-        <p>Premium vehicle customization — wraps, PPF, ceramic coatings, tinting and detailing. Trusted by car enthusiasts across Philadelphia &amp; beyond.</p>
+        <p>Ceramic window tint, ceramic coating and paint protection film. Trusted by car enthusiasts across Philadelphia &amp; Bucks County.</p>
+        <div class="socials">
+          <a href="https://www.instagram.com/sbnautostyling" target="_blank" rel="noopener" aria-label="Instagram"><svg width="17" height="17"><use href="#i-insta"/></svg></a>
+          <a href="https://www.facebook.com/profile.php?id=61586524292167" target="_blank" rel="noopener" aria-label="Facebook"><svg width="17" height="17"><use href="#i-fb"/></svg></a>
+          <a href="tel:+12672637342" aria-label="Call"><svg width="17" height="17"><use href="#i-phone"/></svg></a>
+        </div>
       </div>
       <div>
         <h4>Services</h4>
         <ul>
-          <li><a href="services/ppf/">Paint Protection Film</a></li>
-          <li><a href="services/ceramic-coating/">Ceramic Coating</a></li>
           <li><a href="services/window-tinting/">Window Tinting</a></li>
-          <hr/>
-          <li><a href="ppf-philadelphia/">PPF Philadelphia</a></li>
-          <li><a href="ceramic-coating-philadelphia/">Ceramic Coating Philadelphia</a></li>
+          <li><a href="services/ceramic-coating/">Ceramic Coating</a></li>
+          <li><a href="services/ppf/">Paint Protection Film</a></li>
+          <li><a href="./#studio">SBN Studio</a></li>
+          <li><a href="blog/">Blog</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Areas</h4>
+        <ul>
           <li><a href="window-tinting-philadelphia/">Window Tinting Philadelphia</a></li>
+          <li><a href="ceramic-coating-philadelphia/">Ceramic Coating Philadelphia</a></li>
+          <li><a href="ppf-philadelphia/">PPF Philadelphia</a></li>
           <li><a href="ppf-bucks-county/">PPF Bucks County</a></li>
           <li><a href="ceramic-coating-northeast-philadelphia/">Ceramic NE Philadelphia</a></li>
           <li><a href="window-tinting-bucks-county/">Window Tint Bucks County</a></li>
-          <hr/>
-          <li><a href="blog/">Blog</a></li>
         </ul>
       </div>
       <div>
@@ -381,10 +310,11 @@
           <li><a href="tel:+12672637342">267 263 7342</a></li>
           <li><a href="mailto:hello@sbnautostyling.com">hello@sbnautostyling.com</a></li>
           <li>100 Red Lion Rd, Unit 3<br/>Philadelphia, PA 19115</li>
-          <li>Mon–Sat: 8am – 6pm</li>
+          <li>Mon–Fri 8am–6pm · Sat 8am–5pm</li>
         </ul>
       </div>
     </div>
+    <div class="foot-word" aria-hidden="true">SBN Auto Styling</div>
     <p class="nonref foot-nr">All deposits are non-refundable.</p>
     <div class="foot-bottom">
       <span>© <span class="yr">2026</span> SBN Auto Styling. All rights reserved.</span>
@@ -506,5 +436,6 @@
 
 
 <script src="assets/site.js"></script>
+<script src="assets/cars.js"></script><script src="assets/studio.js"></script>
 </body>
 </html>
