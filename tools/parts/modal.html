@@ -104,7 +104,6 @@
               <div class="field"><label>Front windows</label><select name="front"><option value="70">70% (PA legal)</option><option value="50">50%</option><option value="35">35%</option><option value="20">20%</option><option value="15">15%</option><option value="5">5%</option></select></div>
               <div class="field"><label>Rear windows</label><select name="rear"><option value="70">70%</option><option value="50">50%</option><option value="35">35%</option><option value="20" selected>20%</option><option value="15">15%</option><option value="5">5%</option></select></div>
             </div>
-            <p class="co-err" id="coLegal" hidden>Pennsylvania requires 70% or lighter on the front side windows, so we'll install 70% up front.</p>
           </div>
           <div class="frow">
             <div class="field"><label>First name <span>*</span></label><input name="first_name" required autocomplete="given-name"/></div>
@@ -116,6 +115,7 @@
           </div>
           <div class="field"><label>Notes <em>(optional)</em></label><textarea name="notes" rows="2" placeholder="Anything we should know about your car?"></textarea></div>
           <label class="consent"><input type="checkbox" name="consent" required/> <span>I agree to receive calls and texts from SBN Auto Styling about my appointment. Msg &amp; data rates may apply. Reply STOP to opt out. See our <a href="{R}privacy-policy/" target="_blank">Privacy Policy</a>.</span></label>
+          <p class="note-sm" id="coLegal" hidden>Front side windows are installed at 70% to meet Pennsylvania inspection rules.</p>
           <button type="submit" class="btn btn-primary" id="coSubmit">Continue <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
           <p class="note-sm" id="coNext"></p>
         </form>

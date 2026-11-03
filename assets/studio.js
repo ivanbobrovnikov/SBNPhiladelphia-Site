@@ -13,7 +13,6 @@
   const state = window.SBNState = window.SBNState || { vehicle: null };
 
   const VLTS = [70, 50, 35, 20, 15, 5];
-  const PA_FRONT_MIN = 70; // PA: front side windows must let in 70%+ of light
   const FILMS = {
     ceramic: { name: "Ceramic Tint", desc: "Sides & rear · lifetime warranty", price: 299, was: 499, heat: 45, heatTxt: "40–45%" },
     nano: { name: "Nano Ceramic Tint", desc: "Max heat rejection · signal-safe", price: 399, was: 599, heat: 60, heatTxt: "50–60%" },
@@ -43,15 +42,14 @@
       <div class="stage">
         <div class="stage-hud">
           <div class="readout"><div><small>Front</small><b data-o="front">70%</b></div><div><small>Rear</small><b data-o="rear">20%</b></div></div>
-          <span class="legal" data-o="legal"></span>
         </div>
         <div class="stage-car" data-o="car"></div>
         <p class="stage-foot" data-o="foot"></p>
       </div>
       <div class="panel">
         ${vehicleHTML()}
-        <div><div class="ctl-label">Front windows <em>VLT %</em></div><div class="vlt" data-c="front">
-          ${VLTS.map(v => `<button class="chip-btn${v < PA_FRONT_MIN ? " illegal" : ""}" data-v="${v}">${v}</button>`).join("")}</div></div>
+        <div><div class="ctl-label">Front windows <details class="law"><summary>ⓘ PA tint law</summary><p>Pennsylvania inspection requires front side windows to let in at least 70% of light, so we install 70% up front. Rear windows can be any darkness.</p></details></div><div class="vlt" data-c="front">
+          ${VLTS.map(v => `<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}</div></div>
         <div><div class="ctl-label">Rear windows <em>VLT %</em></div><div class="vlt" data-c="rear">
           ${VLTS.map(v => `<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}</div></div>
         <div><div class="ctl-label">Film</div><div class="film" data-c="film">
@@ -79,17 +77,10 @@
       SBNCars.setTint(car, s.front, s.rear);
       $('[data-o="front"]').textContent = s.front + "%";
       $('[data-o="rear"]').textContent = s.rear + "%";
-      const legal = s.front >= PA_FRONT_MIN, L = $('[data-o="legal"]');
-      L.className = "legal " + (legal ? "ok" : "bad");
-      L.innerHTML = legal ? `${ic("i-check", 14)} PA street-legal` : `⚠ Front fails PA inspection`;
       const f = FILMS[s.film];
       $('[data-o="bars"]').innerHTML = [["UV blocked", 99, "99%"], ["Heat rejection", f.heat, f.heatTxt], ["Signal-friendly", 100, "Yes"]]
         .map(([n, v, t]) => `<div class="bar-row"><span>${n}</span><span class="bar"><i style="width:${v}%"></i></span><b>${t}</b></div>`).join("");
-      const note = $('[data-o="note"]');
-      note.className = "note-sm" + (legal ? "" : " warn");
-      note.textContent = legal
-        ? `${f.name}: front ${s.front}%, rear ${s.rear}%. Sides & rear windows, about 2–3 hours, lifetime warranty.`
-        : `Pennsylvania requires 70% or lighter on the front side windows, so we'll install 70% up front. Your rear windows can be as dark as you want.`;
+      $('[data-o="note"]').textContent = `${f.name}: front ${s.front}%, rear ${s.rear}%. Sides & rear windows, about 2–3 hours, lifetime warranty.`;
       $('[data-o="book"]').innerHTML = `Book ${f.name} · $${f.price} ${ic("i-arrow")}`;
       root.querySelectorAll("[data-c]").forEach(g => g.querySelectorAll("[data-v]").forEach(b => b.classList.toggle("active", String(s[g.dataset.c]) === b.dataset.v)));
     }

@@ -154,8 +154,11 @@ section{position:relative;padding:5rem 1rem}
 .chip-btn{padding:.5rem .8rem;border-radius:10px;border:1px solid var(--line-2);font-size:.82rem;font-weight:600;color:rgba(243,246,249,.8);transition:all .2s;background:rgba(255,255,255,.02)}
 .chip-btn:hover{border-color:rgba(255,255,255,.35);color:#fff}
 .chip-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 20px -8px var(--glow)}
-.chip-btn.illegal{position:relative}
-.chip-btn.illegal::after{content:"";position:absolute;top:4px;right:4px;width:5px;height:5px;border-radius:50%;background:var(--warn)}
+.law{position:relative;font-size:.68rem;letter-spacing:0;text-transform:none;font-weight:500}
+.law summary{list-style:none;cursor:pointer;color:var(--dim)}
+.law summary::-webkit-details-marker{display:none}
+.law summary:hover{color:var(--muted)}
+.law p{position:absolute;right:0;top:1.4rem;z-index:5;width:240px;padding:.7rem .8rem;border-radius:12px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--muted);font-size:.74rem;line-height:1.5;box-shadow:0 12px 30px rgba(0,0,0,.5)}
 .vlt{display:grid;grid-template-columns:repeat(6,1fr);gap:.35rem}
 .vlt .chip-btn{padding:.55rem 0;text-align:center}
 .swatches{display:flex;flex-wrap:wrap;gap:.5rem}

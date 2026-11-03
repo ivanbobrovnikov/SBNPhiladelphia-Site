@@ -115,7 +115,7 @@ let order = null;
 function orderSummary(o) {
   if (o.service === "tint") {
     const f = FILMS[o.film], installed = Math.max(o.front, 70);
-    return { lines: [f.name + " · sides & rear", `Front ${o.front}%${installed !== o.front ? " → installed at 70% (PA law)" : ""} · Rear ${o.rear}%`], price: "$" + f.price, installed };
+    return { lines: [f.name + " · sides & rear", `Front ${o.front}% · Rear ${o.rear}%`], price: "$" + f.price, installed };
   }
   if (o.service === "ceramic") return { lines: ["10-year package: wash, iron decon, clay bar, paint enhancement, coating", "About 8–10 hours"], price: "$499" };
   return { lines: [(o.pkg || "PPF coverage to be decided") + " · free in-person estimate", "20–30 minutes at our shop"], price: "Free" };
