@@ -24,7 +24,7 @@
     SBNVehicles.mount(box, v => {
       state.vehicle = v;
       root.querySelector('[data-o="vehlabel"]').textContent = v ? v.label : "";
-      if (v && v.style) onStyle(v.style);
+      onStyle(v && v.style, v);
     }, state.vehicle || {});
     if (state.vehicle) root.querySelector('[data-o="vehlabel"]').textContent = state.vehicle.label;
   }
@@ -36,8 +36,9 @@
 
   /* ---------------------------------------------------------- TINT */
   function tint(root) {
-    const s = { type: (state.vehicle && state.vehicle.style) || "sports", front: 70, rear: 20, film: "premium", size: "std", ws: "no" };
-    if (s.type === "truck") s.size = "large";
+    const s = { type: (state.vehicle && state.vehicle.style) || "sports", front: 70, rear: 20, film: "premium", ws: "no" };
+    // Size comes from the vehicle they picked (see SBNVehicles.sizeOf); before that, from the preview body style.
+    const size = () => state.vehicle && state.vehicle.size ? state.vehicle.size : (s.type === "truck" ? "large" : "std");
     root.innerHTML = `
     <div class="studio">
       <div class="stage">
@@ -53,11 +54,9 @@
           ${VLTS.map(v => `<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}</div></div>
         <div><div class="ctl-label">Rear windows <em>VLT %</em></div><div class="vlt" data-c="rear">
           ${VLTS.map(v => `<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}</div></div>
-        <div><div class="ctl-label">Vehicle size</div><div class="chips" data-c="size">
-          <button class="chip-btn" data-v="std">Coupe / sedan / small SUV</button><button class="chip-btn" data-v="large">Large SUV / truck +$${PRICES.LARGE_EXTRA}</button></div></div>
         <div><div class="ctl-label">Windshield</div><div class="chips" data-c="ws">
           <button class="chip-btn" data-v="no">Sides &amp; rear only</button><button class="chip-btn" data-v="yes">Add windshield <span data-o="wsp"></span></button></div></div>
-        <div><div class="ctl-label">Film</div><div class="film" data-c="film">
+        <div><div class="ctl-label">Film <em data-o="sizeTxt" class="size-txt"></em></div><div class="film" data-c="film">
           ${Object.entries(FILMS).map(([k, f]) => `<button class="film-opt" data-v="${k}"><span><b>${f.name}</b><small>${irTxt(f)} IR heat rejection · ${f.warranty}</small></span><span class="p" data-p="${k}"></span></button>`).join("")}</div></div>
         <div class="bars" data-o="bars"></div>
         <div class="summary">
@@ -86,10 +85,13 @@
       $('[data-o="bars"]').innerHTML = [["UV blocked", 99, "99%"], ["IR heat rejection", f.ir, irTxt(f)], ["Signal-friendly", 100, "Yes"]]
         .map(([n, v, t]) => `<div class="bar-row"><span>${n}</span><span class="bar"><i style="width:${v}%"></i></span><b>${t}</b></div>`).join("");
       const ws = s.ws === "yes";
-      root.querySelectorAll("[data-p]").forEach(el => el.textContent = price(el.dataset.p, s.size, ws));
+      const sz = size();
+      root.querySelectorAll("[data-p]").forEach(el => el.textContent = price(el.dataset.p, sz, ws));
+      $('[data-o="sizeTxt"]').textContent = !state.vehicle ? `large SUVs & trucks +$${PRICES.LARGE_EXTRA}`
+        : sz === "large" ? `priced as large SUV / truck (+$${PRICES.LARGE_EXTRA})` : "priced as car / small SUV";
       $('[data-o="wsp"]').textContent = "+$" + PRICES.windshield[s.film];
       $('[data-o="note"]').textContent = `${f.name}: front ${s.front}%, rear ${s.rear}%. Sides & rear${ws ? " + windshield" : ""}, about 2–3 hours, ${f.warranty}.`;
-      $('[data-o="book"]').innerHTML = `Book ${f.name} · ${price(s.film, s.size, ws)} ${ic("i-arrow")}`;
+      $('[data-o="book"]').innerHTML = `Book ${f.name} · ${price(s.film, sz, ws)} ${ic("i-arrow")}`;
       root.querySelectorAll("[data-c]").forEach(g => g.querySelectorAll("[data-v]").forEach(b => b.classList.toggle("active", String(s[g.dataset.c]) === b.dataset.v)));
     }
     root.addEventListener("click", e => {
@@ -99,10 +101,9 @@
       key === "type" ? drawCar() : update();
     });
     vehicleBlock(root, style => {
-      if (style === "truck") s.size = "large";
-      if (style !== s.type) { s.type = style; drawCar(); } else update();
+      if (style && style !== s.type) { s.type = style; drawCar(); } else update();
     });
-    $('[data-o="book"]').addEventListener("click", () => checkout({ service: "tint", film: s.film, front: s.front, rear: s.rear, size: s.size, windshield: s.ws === "yes" }));
+    $('[data-o="book"]').addEventListener("click", () => checkout({ service: "tint", film: s.film, front: s.front, rear: s.rear, windshield: s.ws === "yes" }));
     drawCar();
   }
 
@@ -204,7 +205,7 @@
       const key = b.parentElement.dataset.c; if (!key) return;
       s[key] = b.dataset.v; key === "type" ? draw() : update();
     });
-    vehicleBlock(root, style => { if (style !== s.type) { s.type = style; draw(); } });
+    vehicleBlock(root, style => { if (style && style !== s.type) { s.type = style; draw(); } });
     $('[data-o="book"]').addEventListener("click", () => checkout({ service: "ppf", pkg: PPF.find(p => p.k === s.pkg).name }));
     draw();
   }

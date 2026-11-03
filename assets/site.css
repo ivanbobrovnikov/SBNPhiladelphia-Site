@@ -647,3 +647,5 @@ footer{border-top:1px solid var(--line);padding:4rem 1rem 2rem;background:var(--
 .m-plans.three .price{font-size:2.2rem}
 .co-ws{font-size:.85rem;color:var(--fg)}
 .co-ws b{color:var(--cyan)}
+.size-txt{font-size:.72rem!important;color:var(--muted)!important;font-weight:500!important}
+#coSize{font-style:normal;text-transform:none;letter-spacing:0;font-weight:500;color:var(--cyan)}

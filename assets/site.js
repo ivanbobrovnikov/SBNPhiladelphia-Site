@@ -145,22 +145,29 @@ function renderSummary(el) {
 }
 
 function updateWsLabel() { const el = $("#coWsPrice"); if (el && order) el.textContent = "+$" + PRICES.windshield[order.film]; }
+/* Vehicle size is never chosen by the customer: it comes from the year/make/model they picked. */
+function applySize() {
+  order.size = state.vehicle && state.vehicle.size === "large" ? "large" : "std";
+  const form = $("#checkoutForm");
+  [...form.film.options].forEach(o => o.textContent = `${FILMS[o.value].name} · ${FILMS[o.value].irTxt || FILMS[o.value].ir + "%"} IR · ${tintPrice(o.value, order.size)}`);
+  $("#coSize").textContent = !state.vehicle ? "" : order.size === "large" ? `(priced as large SUV / truck, +$${PRICES.LARGE_EXTRA})` : "(priced as car / small SUV)";
+}
 function checkout(o) {
-  const guessSize = state.vehicle && state.vehicle.style === "truck" ? "large" : "std";
-  order = { film: "premium", front: 70, rear: 20, size: guessSize, ...o };
+  order = { film: "premium", front: 70, rear: 20, ...o };
   if (!FILMS[order.film]) order.film = "premium";
   const form = $("#checkoutForm");
   $("#coTitle").textContent = SERVICES[order.service].title;
   $("#coNext").textContent = SERVICES[order.service].next;
   $("#coSubmit").innerHTML = (order.service === "ppf" ? "Request my free estimate" : "Continue to calendar & deposit") + ' <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg>';
   $("#coTint").hidden = order.service !== "tint";
-  form.film.innerHTML = Object.entries(FILMS).map(([k, f]) => `<option value="${k}">${f.name} · ${f.irTxt || f.ir + "%"} IR · ${tintPrice(k, order.size)}</option>`).join("");
-  form.film.value = order.film; form.front.value = order.front; form.rear.value = order.rear; form.size.value = order.size;
+  form.film.innerHTML = Object.keys(FILMS).map(k => `<option value="${k}"></option>`).join("");
+  form.film.value = order.film; form.front.value = order.front; form.rear.value = order.rear;
   form.windshield.checked = !!order.windshield; updateWsLabel();
+  applySize();
   $("#coLegal").hidden = order.front >= 70;
   if (window.SBNVehicles) SBNVehicles.mount($("#coVehicle"), v => {
     state.vehicle = v; $("#coVehErr").hidden = true;
-    if (v && v.style === "truck") { order.size = "large"; form.size.value = "large"; }
+    applySize();
     renderSummary($("#coSummary"));
   }, state.vehicle || {});
   renderSummary($("#coSummary"));
@@ -171,10 +178,9 @@ if (coForm) {
   coForm.addEventListener("change", e => {
     const k = e.target.name;
     if (k === "windshield") { order.windshield = e.target.checked; return renderSummary($("#coSummary")); }
-    if (!["film", "front", "rear", "size"].includes(k)) return;
-    order[k] = ["film", "size"].includes(k) ? e.target.value : +e.target.value;
+    if (!["film", "front", "rear"].includes(k)) return;
+    order[k] = k === "film" ? e.target.value : +e.target.value;
     if (k === "film") updateWsLabel();
-    if (k === "size") [...coForm.film.options].forEach(o => o.textContent = `${FILMS[o.value].name} · ${FILMS[o.value].irTxt || FILMS[o.value].ir + "%"} IR · ${tintPrice(o.value, order.size)}`);
     $("#coLegal").hidden = order.front >= 70;
     renderSummary($("#coSummary"));
   });

@@ -25,6 +25,14 @@
     return "sedan";
   }
 
+  /* Pricing size: every truck/van, plus full-size and 3-row SUVs and minivans, is "large" (+$60 on tint).
+     Everything else (cars, compact & mid-size 2-row SUVs) is "std". Edit LARGE to change what counts as big. */
+  const LARGE = /\b(tahoe|suburban|yukon|escalade|expedition|navigator|sequoia|land cruiser|lx ?\d*|gx ?\d*|qx80|armada|wagoneer|grand cherokee l|durango|traverse|enclave|acadia|explorer|aviator|pilot|mdx|telluride|palisade|atlas\b(?! cross)|ascent|highlander|grand highlander|pathfinder|qx60|cx-9\d?|x7|gls|gle|q7|q8|xc90|range rover(?! (evoque|velar|sport))|defender 1[13]0|discovery\b(?! sport)|model x|r1s|ex90|ev9|ioniq 9|vistiq|sienna|odyssey|pacifica|carnival|voyager|sprinter|transit|promaster|express|savana|metris|cullinan)\b/i;
+  function sizeOf(make, model, style) {
+    if (style === "truck") return "large";
+    return LARGE.test(`${make} ${model}`) ? "large" : "std";
+  }
+
   const cache = {};
   async function models(make, year) {
     const key = make + year;
@@ -64,7 +72,7 @@
       const m = list.find(x => x.name === s.model);
       const style = s.make === "__other" ? null : bodyStyle(s.make, s.model, m && m.type);
       const label = s.make === "__other" ? `${s.year} ${s.model}` : `${s.year} ${s.make} ${s.model}`;
-      onChange({ year: s.year, make: s.make === "__other" ? "" : s.make, model: s.model, style, label });
+      onChange({ year: s.year, make: s.make === "__other" ? "" : s.make, model: s.model, style, label, size: sizeOf(s.make, s.model, style) });
     };
     async function loadModels() {
       const sel = $("model");
@@ -93,5 +101,5 @@
     if (s.year && s.make) loadModels().then(() => { if (initial.model) { $("model").value = initial.model; s.model = initial.model; emit(); } });
   }
 
-  window.SBNVehicles = { mount, bodyStyle, models };
+  window.SBNVehicles = { mount, bodyStyle, sizeOf, models };
 })();
