@@ -65,8 +65,19 @@ for name, c in CFG.items():
     paint = paint_mask(img, c["patch"], c["thresh"], c.get("lw", 0.35))
     excl = poly_mask(img.shape, c.get("exclude", []))
     for part in ("front", "rear"):
-        if c.get("precise"):  # outline traced exactly on the glass edge: use it as-is
-            glass = poly_mask(img.shape, c[part]) & ~excl
+        if c.get("precise"):
+            # Traced outline: its core is always glass; around the edge, grow out over the
+            # (black) window seal to close gaps, but never onto anything that matches the paint.
+            poly = poly_mask(img.shape, c[part])
+            core = cv2.erode(poly.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0
+            edge = poly_mask(img.shape, c[part], c.get("seal", 6)) & ~paint
+            edge = cv2.morphologyEx(edge.astype(np.uint8), cv2.MORPH_OPEN, np.ones((3, 3), np.uint8)) > 0
+            m = ndimage.binary_fill_holes(core | edge)
+            lbl, _ = ndimage.label(m)  # keep only what's connected to the traced window (drops stray specks)
+            m = np.isin(lbl, np.unique(lbl[core & (lbl > 0)]))
+            m = cv2.morphologyEx(m.astype(np.uint8) * 255, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
+            m = cv2.medianBlur(m, 5) > 0  # smooth ragged edges
+            glass = (m | core) & ~excl
         else:  # loose outline: anything inside that isn't paint is glass
             rough = poly_mask(img.shape, c[part], c.get("grow", 6))
             glass = clean(rough & ~paint & ~excl, min_area=c.get("min_glass", 300))
