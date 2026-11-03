@@ -65,8 +65,11 @@ for name, c in CFG.items():
     paint = paint_mask(img, c["patch"], c["thresh"], c.get("lw", 0.35))
     excl = poly_mask(img.shape, c.get("exclude", []))
     for part in ("front", "rear"):
-        rough = poly_mask(img.shape, c[part], c.get("grow", 6))
-        glass = clean(rough & ~paint & ~excl, min_area=c.get("min_glass", 300))
+        if c.get("precise"):  # outline traced exactly on the glass edge: use it as-is
+            glass = poly_mask(img.shape, c[part]) & ~excl
+        else:  # loose outline: anything inside that isn't paint is glass
+            rough = poly_mask(img.shape, c[part], c.get("grow", 6))
+            glass = clean(rough & ~paint & ~excl, min_area=c.get("min_glass", 300))
         save(glass, os.path.join(OUT, f"{name}-{part}.png"))
     # Body: GrabCut separates the car from the background, seeded by the loose outline,
     # then the glass is cut out. PPF covers lights and trim too, so we don't colour-match paint here.
