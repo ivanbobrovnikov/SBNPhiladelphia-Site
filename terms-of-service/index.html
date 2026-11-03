@@ -159,7 +159,7 @@
             <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Film choices &amp; coverage zones walkthrough with our team</li>
             <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Honest no-obligation quote — takes 20–30 minutes</li>
           </ul>
-          <a class="btn btn-primary" href="tel:+12672637342"><svg width="16" height="16"><use href="#i-phone"/></svg>Call to Book</a>
+          <button class="btn btn-primary" data-book="ppf">Request my free estimate <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
         </div></div></div>
       </div>
 
@@ -196,7 +196,7 @@
               <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Heat &amp; glare reduction</li>
               <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Lifetime warranty</li>
             </ul>
-            <button class="btn btn-white" data-book="tint">Book Now <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
+            <button class="btn btn-white" data-book="tint" data-film="ceramic">Book Now <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
           </div></div>
           <div class="plan featured"><div class="plan-top">★ MOST POPULAR</div><div class="plan-body">
             <div class="plan-head"><span class="plan-name">Nano Ceramic — Sides &amp; Rear</span><span class="sale">Sale</span></div>
@@ -208,15 +208,55 @@
               <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>No signal interference</li>
               <li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Lifetime warranty</li>
             </ul>
-            <button class="btn btn-primary" data-book="tint">Book Now <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
+            <button class="btn btn-primary" data-book="tint" data-film="nano">Book Now <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
           </div></div>
         </div>
       </div>
 
-      <!-- step: booking calendar (LeadConnector) -->
+      <!-- step: checkout (vehicle, service details, contact) -->
+      <div class="m-step" data-step="checkout">
+        <div class="m-head"><button class="m-back" data-go="pick" aria-label="Back"><svg width="14" height="14"><use href="#i-chevl"/></svg></button><div><div class="m-kicker">Checkout · Step 1 of 2</div><div class="m-title" id="coTitle">Your appointment</div></div></div>
+        <form id="checkoutForm" class="co" novalidate>
+          <div class="co-sum" id="coSummary"></div>
+          <div class="field"><label>Your vehicle <span>*</span></label><div id="coVehicle"></div><p class="co-err" id="coVehErr" hidden>Pick your year, make and model.</p></div>
+          <div class="co-tint" id="coTint" hidden>
+            <div class="field"><label>Film</label><select name="film"><option value="ceramic">Ceramic Tint · $299</option><option value="nano">Nano Ceramic Tint · $399</option></select></div>
+            <div class="frow">
+              <div class="field"><label>Front windows</label><select name="front"><option value="70">70% (PA legal)</option><option value="50">50%</option><option value="35">35%</option><option value="20">20%</option><option value="15">15%</option><option value="5">5%</option></select></div>
+              <div class="field"><label>Rear windows</label><select name="rear"><option value="70">70%</option><option value="50">50%</option><option value="35">35%</option><option value="20" selected>20%</option><option value="15">15%</option><option value="5">5%</option></select></div>
+            </div>
+            <p class="co-err" id="coLegal" hidden>Pennsylvania requires 70% or lighter on the front side windows, so we'll install 70% up front.</p>
+          </div>
+          <div class="frow">
+            <div class="field"><label>First name <span>*</span></label><input name="first_name" required autocomplete="given-name"/></div>
+            <div class="field"><label>Last name <span>*</span></label><input name="last_name" required autocomplete="family-name"/></div>
+          </div>
+          <div class="frow">
+            <div class="field"><label>Phone <span>*</span></label><input name="phone" type="tel" required autocomplete="tel" placeholder="(267) 555-0100"/></div>
+            <div class="field"><label>Email <span>*</span></label><input name="email" type="email" required autocomplete="email" placeholder="you@email.com"/></div>
+          </div>
+          <div class="field"><label>Notes <em>(optional)</em></label><textarea name="notes" rows="2" placeholder="Anything we should know about your car?"></textarea></div>
+          <label class="consent"><input type="checkbox" name="consent" required/> <span>I agree to receive calls and texts from SBN Auto Styling about my appointment. Msg &amp; data rates may apply. Reply STOP to opt out. See our <a href="../privacy-policy/" target="_blank">Privacy Policy</a>.</span></label>
+          <button type="submit" class="btn btn-primary" id="coSubmit">Continue <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
+          <p class="note-sm" id="coNext"></p>
+        </form>
+      </div>
+
+      <!-- step: booking calendar + deposit (GoHighLevel / LeadConnector) -->
       <div class="m-step" data-step="book">
-        <div class="m-head"><button class="m-back" data-go="pick" aria-label="Back"><svg width="14" height="14"><use href="#i-chevl"/></svg></button><div><div class="m-kicker">SBN Auto Styling</div><div class="m-title" id="bookTitle">Book</div></div></div>
+        <div class="m-head"><button class="m-back" data-go="checkout" aria-label="Back"><svg width="14" height="14"><use href="#i-chevl"/></svg></button><div><div class="m-kicker">Checkout · Step 2 of 2</div><div class="m-title" id="bookTitle">Pick a time</div></div></div>
+        <div class="co-sum" id="bookSummary" style="margin-top:1rem"></div>
         <div style="margin-top:1rem"><iframe class="booking-frame" id="bookingFrame" title="Booking calendar" allow="payment"></iframe></div>
+      </div>
+
+      <!-- step: PPF estimate requested -->
+      <div class="m-step" data-step="done">
+        <div class="co-done">
+          <div class="co-check"><svg width="28" height="28"><use href="#i-check"/></svg></div>
+          <div class="m-title">Estimate requested</div>
+          <p id="doneText">We'll call you within 1 business day to set up your free in-person PPF estimate.</p>
+          <a class="btn btn-outline" href="tel:+12672637342"><svg width="16" height="16"><use href="#i-phone"/></svg>Need us sooner? 267 263 7342</a>
+        </div>
       </div>
 
       <div class="m-foot">Questions? <a href="tel:+12672637342">Call 267 263 7342</a><p class="nonref">All deposits are non-refundable.</p></div>
@@ -232,6 +272,7 @@
 <a class="chat-fab" href="sms:+12672637342" aria-label="Chat with us"><svg width="26" height="26"><use href="#i-chat"/></svg></a>
 
 
+<script src="../assets/vehicles.js"></script>
 <script src="../assets/site.js"></script>
 
 </body>

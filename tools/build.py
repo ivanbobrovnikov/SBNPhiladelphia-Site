@@ -151,6 +151,7 @@ def render(path, title, desc, body, header, footer, auto_modal=False):
 {footer}
 {fix_paths(MODAL)}
 {CHAT}
+<script src="{{R}}assets/vehicles.js"></script>
 <script src="{{R}}assets/site.js"></script>
 {'<script src="{R}assets/cars.js"></script><script src="{R}assets/studio.js"></script>' if 'data-studio' in body else ''}
 </body>
@@ -181,7 +182,7 @@ OTHERS = {"ppf": ("i-shield", "Paint Protection Film", "Invisible shield against
           "tint": ("i-eye", "Window Tinting", "Block UV, slash heat, elevate your look.", "services/window-tinting/")}
 
 
-def plan_card(name, was, now, feats, duration, book, featured):
+def plan_card(name, was, now, feats, duration, book, featured, film=None):
     top = '<div class="plan-top">★ MOST POPULAR</div>' if featured else ""
     btn = "btn-primary" if featured else "btn-white"
     return f'''<div class="plan{' featured' if featured else ''} reveal">{top}<div class="plan-body">
@@ -189,7 +190,7 @@ def plan_card(name, was, now, feats, duration, book, featured):
       <div class="was">{was}</div><div class="price">{now}</div><div class="today">Book today's price</div>
       <ul class="feat">{checks(feats)}</ul>
       <div class="duration">{ic("i-clock", 15)}{duration}</div>
-      <button class="btn {btn}" data-book="{book}">Book Now {ic("i-arrow", 16, "arrow")}</button>
+      <button class="btn {btn}" data-book="{book}"{f' data-film="{film}"' if film else ""}>Book Now {ic("i-arrow", 16, "arrow")}</button>
     </div></div>'''
 
 
@@ -254,7 +255,7 @@ service_page("services/ppf", "ppf", "PPF", "Paint Protection Film",
         "No pressure, no obligation — just honest answers and a clear quote",
         "Most estimates take 20–30 minutes at our Philadelphia location"])}</ul></div>
     <div><div class="k">No Obligation · 100% Free</div><h3>Schedule Your Free PPF Estimate</h3>
-      <div class="btns"><a class="btn btn-primary btn-md" href="{TEL}">{ic("i-phone", 16)}Call to Book</a><a class="btn btn-dark btn-md" href="{TEL}">Call Us</a></div></div>
+      <div class="btns"><button class="btn btn-primary btn-md" data-book="ppf">Request free estimate {ic("i-arrow", 16, "arrow")}</button><a class="btn btn-dark btn-md" href="{TEL}">{ic("i-phone", 16)}Call us</a></div></div>
   </div>
   <p class="addr-line">Philadelphia, PA · 100 Red Lion Rd Unit 3 · 267 263 7342</p>
 </div></section>''')
@@ -277,8 +278,8 @@ service_page("services/window-tinting", "tint", "TINT", "Window Tinting",
   <h2 class="h-display h2">Choose Your Package</h2>
   <p class="lead">Pricing varies by vehicle size and condition — contact us for an exact quote.</p>
   <div class="plans center-2" style="text-align:left">
-    {plan_card("Ceramic Window Tint", "$499", "$299", ["Sides & rear windows", "Ceramic tint film", "Blocks up to 99% UV rays", "Reduces heat & glare", "Lifetime warranty"], "2 – 3 hours", "tint", False)}
-    {plan_card("Nano Ceramic Tint", "$599", "$399", ["Sides & rear windows", "Nano ceramic film", "Maximum IR heat rejection", "No signal interference (GPS, Bluetooth)", "Lifetime warranty"], "2 – 3 hours", "tint", True)}
+    {plan_card("Ceramic Window Tint", "$499", "$299", ["Sides & rear windows", "Ceramic tint film", "Blocks up to 99% UV rays", "Reduces heat & glare", "Lifetime warranty"], "2 – 3 hours", "tint", False, "ceramic")}
+    {plan_card("Nano Ceramic Tint", "$599", "$399", ["Sides & rear windows", "Nano ceramic film", "Maximum IR heat rejection", "No signal interference (GPS, Bluetooth)", "Lifetime warranty"], "2 – 3 hours", "tint", True, "nano")}
   </div>
   <p class="note">Prices vary by vehicle make, model &amp; condition. Contact us for an exact quote — always free.</p>
 </div></section>''')
