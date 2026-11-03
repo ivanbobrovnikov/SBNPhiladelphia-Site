@@ -58,7 +58,7 @@
         <div><div class="ctl-label">Windshield</div><div class="chips" data-c="ws">
           <button class="chip-btn" data-v="no">Sides &amp; rear only</button><button class="chip-btn" data-v="yes">Add windshield <span data-o="wsp"></span></button></div></div>
         <div><div class="ctl-label">Film</div><div class="film" data-c="film">
-          ${Object.entries(FILMS).map(([k, f]) => `<button class="film-opt" data-v="${k}"><span><b>${f.name}</b><small>${irTxt(f)} IR heat rejection · 99% UV</small></span><span class="p" data-p="${k}"></span></button>`).join("")}</div></div>
+          ${Object.entries(FILMS).map(([k, f]) => `<button class="film-opt" data-v="${k}"><span><b>${f.name}</b><small>${irTxt(f)} IR heat rejection · ${f.warranty}</small></span><span class="p" data-p="${k}"></span></button>`).join("")}</div></div>
         <div class="bars" data-o="bars"></div>
         <div class="summary">
           <p class="note-sm" data-o="note"></p>
@@ -88,7 +88,7 @@
       const ws = s.ws === "yes";
       root.querySelectorAll("[data-p]").forEach(el => el.textContent = price(el.dataset.p, s.size, ws));
       $('[data-o="wsp"]').textContent = "+$" + PRICES.windshield[s.film];
-      $('[data-o="note"]').textContent = `${f.name}: front ${s.front}%, rear ${s.rear}%. Sides & rear${ws ? " + windshield" : ""}, about 2–3 hours, lifetime warranty.`;
+      $('[data-o="note"]').textContent = `${f.name}: front ${s.front}%, rear ${s.rear}%. Sides & rear${ws ? " + windshield" : ""}, about 2–3 hours, ${f.warranty}.`;
       $('[data-o="book"]').innerHTML = `Book ${f.name} · ${price(s.film, s.size, ws)} ${ic("i-arrow")}`;
       root.querySelectorAll("[data-c]").forEach(g => g.querySelectorAll("[data-v]").forEach(b => b.classList.toggle("active", String(s[g.dataset.c]) === b.dataset.v)));
     }

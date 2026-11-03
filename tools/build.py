@@ -280,7 +280,7 @@ service_page("services/window-tinting", "tint", "TINT", "Window Tinting",
   <h2 class="h-display h2">Choose Your Package</h2>
   <p class="lead">Pricing varies by vehicle size and condition — contact us for an exact quote.</p>
   <div class="plans center-3" style="text-align:left">
-    {plan_card("Standard Ceramic", "", "$199", ["Sides & rear windows", "60% IR heat rejection", "Blocks 99% UV", "Lifetime warranty"], "2 – 3 hours", "tint", False, "standard", "Windshield +$195")}
+    {plan_card("Standard Ceramic", "", "$199", ["Sides & rear windows", "60% IR heat rejection", "Blocks 99% UV", "3-year warranty"], "2 – 3 hours", "tint", False, "standard", "Windshield +$195")}
     {plan_card("Premium Ceramic", "", "$299", ["Sides & rear windows", "75% IR heat rejection", "Blocks 99% UV", "Lifetime warranty"], "2 – 3 hours", "tint", True, "premium", "Windshield +$225")}
     {plan_card("Nano Ceramic", "", "$450", ["Sides & rear windows", "95%+ IR heat rejection", "Blocks 99% UV", "Lifetime warranty"], "2 – 3 hours", "tint", False, "nano", "Windshield +$250", "Starting at")}
   </div>
@@ -377,12 +377,12 @@ philly_page("ceramic-coating-philadelphia", "Ceramic Coating Philadelphia PA | 1
 <button class="btn btn-primary btn-md" data-book="ceramic">Book Now — Sale Price</button></div>''')
 
 philly_page("window-tinting-philadelphia", "Window Tinting Philadelphia PA | Ceramic & Nano Ceramic Tint | SBN Auto Styling",
-            "Professional window tinting in Philadelphia PA. Ceramic tint from $199: Standard, Premium and Nano Ceramic films. PA legal tint. Lifetime warranty. Book online at SBN Auto Styling.",
+            "Professional window tinting in Philadelphia PA. Ceramic tint from $199: Standard, Premium and Nano Ceramic films. PA legal tint. Lifetime warranty on Premium & Nano. Book online at SBN Auto Styling.",
             "Philadelphia, PA", "Window Tinting", "Philadelphia",
-            "SBN Auto Styling provides ceramic and nano ceramic window tinting in Philadelphia — always PA-legal, bubble-free installs with a lifetime warranty. Sale pricing available on all packages.",
+            "SBN Auto Styling provides ceramic and nano ceramic window tinting in Philadelphia — always PA-legal, bubble-free installs. Three ceramic films from $199, with a lifetime warranty on Premium and Nano Ceramic.",
             f'<button class="btn btn-primary btn-md" data-book="tint">Book Online Now</button><a class="btn btn-dark btn-md" href="{{R}}services/window-tinting/">View Full Service Details →</a>',
             f'''<div class="block"><h2>Tint Packages</h2><div class="cards2">
-{pkg("Standard Ceramic", "$199", "", ["Sides & rear windows", "60% IR heat rejection", "Blocks 99% UV", "Lifetime warranty"])}
+{pkg("Standard Ceramic", "$199", "", ["Sides & rear windows", "60% IR heat rejection", "Blocks 99% UV", "3-year warranty"])}
 {pkg("Premium Ceramic — Most Popular", "$299", "", ["Sides & rear windows", "75% IR heat rejection", "Blocks 99% UV", "Lifetime warranty"], True)}
 {pkg("Nano Ceramic — Max Heat Rejection", "from $450", "", ["Sides & rear windows", "95%+ IR heat rejection", "Blocks 99% UV", "Lifetime warranty"])}</div>
 <p class="small-note">Prices for coupes, sedans &amp; small SUVs; larger SUVs &amp; trucks +$60. Add the windshield: +$195 Standard, +$225 Premium, +$250 Nano.</p>
@@ -394,12 +394,12 @@ philly_page("window-tinting-philadelphia", "Window Tinting Philadelphia PA | Cer
     ("Clean, Factory Look", "Our film is precision-cut to your vehicle. No razor blades on glass, no excess film — just clean edges that look like they came from the factory.")])}</div>
 <div class="block"><h2>FAQ — Window Tinting Philadelphia</h2>{faq([
     ("What is the legal window tint percentage in Pennsylvania?", "In Pennsylvania, front side windows must allow more than 70% of light in (70% VLT). Rear side windows and the rear windshield can be any darkness. We always install PA-legal tint — you'll never fail inspection because of our work."),
-    ("How much does window tinting cost in Philadelphia?", "Sides & rear windows on a coupe, sedan or small SUV: Standard Ceramic $199, Premium Ceramic $299, Nano Ceramic from $450. Larger SUVs and trucks are $60 more. Adding the windshield is $195 / $225 / $250 depending on film. All include a lifetime warranty."),
+    ("How much does window tinting cost in Philadelphia?", "Sides & rear windows on a coupe, sedan or small SUV: Standard Ceramic $199, Premium Ceramic $299, Nano Ceramic from $450. Larger SUVs and trucks are $60 more. Adding the windshield is $195 / $225 / $250 depending on film. Standard comes with a 3-year warranty; Premium and Nano come with a lifetime warranty."),
     ("What's the difference between Standard, Premium and Nano Ceramic?", "All three are ceramic films that block 99% of UV and don't interfere with GPS, Bluetooth or cell signal. The difference is infrared heat rejection: Standard 60%, Premium 75%, Nano 95%+."),
     ("How long does window tinting take in Philadelphia?", "Most vehicles are completed in 2–3 hours at our Philadelphia shop. We cut all film precisely to your vehicle's windows — no razor blades on the glass, clean edges every time."),
     ("Does window tint really reduce heat?", "Yes — significantly. Nano ceramic tint can reject up to 99% of UV rays and dramatically reduce infrared heat buildup. On a hot Philadelphia summer day, the difference inside the car is immediate and noticeable.")])}</div>
 <div class="block closer"><h2 class="h-display" style="font-size:2rem">Book Your Tint Today</h2>
-<p>2–3 hour install. Lifetime warranty. Sale pricing available now at 100 Red Lion Road Unit 3, Philadelphia PA 19115.</p>
+<p>2–3 hour install. Lifetime warranty on Premium &amp; Nano Ceramic. At 100 Red Lion Road Unit 3, Philadelphia PA 19115.</p>
 <button class="btn btn-primary btn-md" data-book="tint">Book Now — Sale Price</button></div>''')
 
 
@@ -555,7 +555,7 @@ POSTS = [
                ("p", "Pennsylvania also regulates reflectivity — tint cannot be mirrored or metallic in appearance. Our ceramic and nano ceramic films are non-reflective by design."),
                ("h", "Medical Exemptions"),
                ("p", "Pennsylvania does offer a medical exemption permit for individuals with certain skin conditions requiring reduced UV exposure. If you qualify, contact PennDOT — it allows darker front windows with a permit.")],
-         cta=("All SBN window tint installs are Pennsylvania-legal with a lifetime warranty.", "Book Window Tint", "book:tint")),
+         cta=("All SBN window tint installs are Pennsylvania-legal, with a lifetime warranty on Premium and Nano Ceramic film.", "Book Window Tint", "book:tint")),
     dict(slug="ppf-vs-ceramic-coating", cat="PPF", read="5 min read", date="December 10, 2025",
          title="PPF vs Ceramic Coating: Which Does Your Philadelphia Car Need?",
          dek="PPF and ceramic coating solve different problems. Here's how to choose — or why many Philadelphia drivers get both.",
@@ -689,7 +689,7 @@ legal("terms-of-service", "Terms of Service | SBN Auto Styling",
         "Remove personal belongings before drop-off. SBN is not responsible for items left in the vehicle.",
         "Ensure the vehicle has sufficient fuel and is in safe, drivable condition.",
         "Follow our post-install care instructions (e.g., curing time for ceramic coating, no car washes for window tint, etc.). Failure to follow care instructions may void coverage."]]),
-    ("6. Workmanship &amp; Warranty", ["We stand behind the quality of our work. Specific warranties (for example, the multi-year ceramic coating warranty or the lifetime tint warranty) are described on the relevant service page or in your service receipt. Warranty terms cover defects in workmanship and product performance only; they do not cover:", [
+    ("6. Workmanship &amp; Warranty", ["We stand behind the quality of our work. Specific warranties (for example, the multi-year ceramic coating warranty, the 3-year Standard Ceramic tint warranty or the lifetime Premium and Nano Ceramic tint warranty) are described on the relevant service page or in your service receipt. Warranty terms cover defects in workmanship and product performance only; they do not cover:", [
         "Damage from accidents, collisions, abrasive washing, or improper care.",
         "Pre-existing paint defects, rust, chips, scratches, or contaminated paint identified before or during prep.",
         "Acts of nature, vandalism, road debris, chemical exposure outside normal driving conditions, or modifications made by third parties.",

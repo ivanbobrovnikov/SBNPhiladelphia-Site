@@ -16,9 +16,9 @@ const GHL_WEBHOOK = "";
 // The tint visualizer, checkout and booking popup all read from here.
 const PRICES = window.SBN_PRICES = {
   tint: {
-    standard: { name: "Standard Ceramic", ir: 60, price: 199, from: false },
-    premium:  { name: "Premium Ceramic",  ir: 75, price: 299, from: false },
-    nano:     { name: "Nano Ceramic",     ir: 95, price: 450, from: true, irTxt: "95%+" },
+    standard: { name: "Standard Ceramic", ir: 60, price: 199, from: false, warranty: "3-year warranty" },
+    premium:  { name: "Premium Ceramic",  ir: 75, price: 299, from: false, warranty: "lifetime warranty" },
+    nano:     { name: "Nano Ceramic",     ir: 95, price: 450, from: true, irTxt: "95%+", warranty: "lifetime warranty" },
   },
   LARGE_EXTRA: 60,
   windshield: { standard: 195, premium: 225, nano: 250 },  // add-on, per film
@@ -134,7 +134,7 @@ let order = null;
 function orderSummary(o) {
   if (o.service === "tint") {
     const f = FILMS[o.film], installed = Math.max(o.front, 70);
-    return { lines: [`${f.name} film (${f.irTxt || f.ir + "%"} IR rejection) · sides & rear${o.windshield ? " + windshield" : ""}`, `Front ${o.front}% · Rear ${o.rear}%`, SIZES[o.size] + (o.size === "large" ? ` (+$${PRICES.LARGE_EXTRA})` : "") + (o.windshield ? ` · windshield +$${PRICES.windshield[o.film]}` : "")], price: tintPrice(o.film, o.size, o.windshield), installed };
+    return { lines: [`${f.name} film (${f.irTxt || f.ir + "%"} IR rejection, ${f.warranty}) · sides & rear${o.windshield ? " + windshield" : ""}`, `Front ${o.front}% · Rear ${o.rear}%`, SIZES[o.size] + (o.size === "large" ? ` (+$${PRICES.LARGE_EXTRA})` : "") + (o.windshield ? ` · windshield +$${PRICES.windshield[o.film]}` : "")], price: tintPrice(o.film, o.size, o.windshield), installed };
   }
   if (o.service === "ceramic") return { lines: ["Wash, iron decon, clay bar, paint enhancement, ceramic coating", `Sale price (regularly $${PRICES.ceramicWas.toLocaleString()}) · about 8–10 hours`], price: "$" + PRICES.ceramic };
   return { lines: [(o.pkg || "PPF coverage to be decided") + " · free in-person estimate", "20–30 minutes at our shop"], price: "Free" };
