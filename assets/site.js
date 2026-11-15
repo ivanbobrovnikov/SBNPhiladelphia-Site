@@ -334,7 +334,11 @@ if (coForm) {
 /* Posts a lead to the GoHighLevel inbound webhook. Form-encoded + no-cors so the browser sends it without a preflight. */
 function sendLead(lead) {
   if (!GHL_WEBHOOK) { console.warn("SBN: GHL_WEBHOOK not set, lead not sent", lead); return Promise.resolve(false); }
-  return fetch(GHL_WEBHOOK, { method: "POST", mode: "no-cors", body: new URLSearchParams(lead) }).then(() => true, () => false);
+  // GoHighLevel's inbound webhook only reads JSON. Try a normal JSON request; if the browser blocks it (CORS),
+  // send the same JSON as a "simple" request, which still reaches GHL but can't be read back.
+  const body = JSON.stringify(lead);
+  return fetch(GHL_WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true })
+    .then(r => r.ok, () => fetch(GHL_WEBHOOK, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body, keepalive: true }).then(() => true, () => false));
 }
 function book(key, film) { checkout(film ? { service: key, film } : { service: key }); }
 window.SBN = { book, checkout, openModal, closeModal, sendLead };
