@@ -27,7 +27,7 @@ const PRICES = window.SBN_PRICES = {
   LARGE_EXTRA: 60,
   windshield: { standard: 195, premium: 225, nano: 250 },  // add-on, per film
   ceramic: 499, ceramicWas: 1295,  // ceramic coating sale price / regular price
-  DEPOSIT: null,  // deposit you take in GoHighLevel, e.g. 50. null = the site just says "a small deposit"
+  DEPOSIT: { tint: 50, ceramic: 95 },  // per service; must match the payment set in each GoHighLevel calendar
 };
 // Fallback for the PPF estimate form if no webhook is set: opens an email.
 const LEAD_EMAIL = "hello@sbnautostyling.com";
@@ -163,9 +163,10 @@ function orderSummary(o) {
   if (o.service === "ceramic") return { lines: ["Wash, iron decon, clay bar, paint enhancement, ceramic coating", `Sale price (regularly $${PRICES.ceramicWas.toLocaleString()}) · about 8–10 hours`], price: "$" + PRICES.ceramic };
   return { lines: [(o.pkg || "PPF coverage to be decided") + " · free in-person estimate", "20–30 minutes at our shop"], price: "Free" };
 }
+function depositFor(svc) { return (PRICES.DEPOSIT || {})[svc] || null; }
 function renderSummary(el) {
   const s = orderSummary(order), v = state.vehicle, L = LOCS[order.loc];
-  el.innerHTML = `<div><b>${SERVICES[order.service].title}${L ? ` · SBN ${L.name}` : ""}</b>${s.lines.map(l => `<small>${l}</small>`).join("")}${v ? `<small>Vehicle: ${v.label}</small>` : ""}</div><span>${s.price}</span>`;
+  el.innerHTML = `<div><b>${SERVICES[order.service].title}${L ? ` · SBN ${L.name}` : ""}</b>${s.lines.map(l => `<small>${l}</small>`).join("")}${v ? `<small>Vehicle: ${v.label}</small>` : ""}${depositFor(order.service) ? `<small class="co-dep">$${depositFor(order.service)} deposit to book · rest after the job</small>` : ""}</div><span>${s.price}</span>`;
 }
 /* The small legal line above the checkout button, only when their pick won't be installed as-is. */
 function updateLegal() {
@@ -208,7 +209,7 @@ function showPage(i) {
   $("#coSubmit").innerHTML = !last ? "Next" + arrow
     : order.service === "ppf" ? "Request my free estimate" + arrow
     : hasCal ? "Pick my time" + arrow : "Request my appointment" + arrow;
-  const dep = PRICES.DEPOSIT ? `$${PRICES.DEPOSIT} deposit` : "A small deposit";
+  const dep = depositFor(order.service) ? `A $${depositFor(order.service)} deposit` : "A small deposit";
   $("#coNext").textContent = !last ? "" : order.service === "ppf" ? "Free and no obligation. We'll call you to set a time."
     : hasCal ? `Next: pick a time. ${dep} locks your spot; the rest is due after the job.` : `The shop will call you to confirm a time. ${dep} locks your spot.`;
   const L = LOCS[order.loc] || LOCS.philadelphia;

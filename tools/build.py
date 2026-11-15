@@ -243,7 +243,7 @@ def visit_single(k, L):
     if L["street"]:
         addr = f'{L["street"]}<br/>{L["city"]}, {L["region"]} {L["zip"]}'
         q = urllib.parse.quote(f'{L["street"]}, {L["city"]}, {L["region"]} {L["zip"]}')
-        hours = "".join(f"<span>{d}</span><b>{h}</b>" for d, h in L["hours"])
+        hours = "".join(f"<span>{d}</span><b>{h}</b>" for d, h in L["hours"]) if L["hours"] else "<span>Hours</span><b>Call or book online</b>"
         right = f'<div class="map reveal d1"><iframe loading="lazy" title="SBN Auto Styling {L["name"]} location" src="https://www.google.com/maps?q={q}&z=13&output=embed"></iframe></div>'
         btn = f'<a class="btn btn-primary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination={q}">{ic("i-nav", 16)}Get directions</a>'
         hours_html = f'<div><div class="k-label">Hours</div><div class="hours">{hours}</div></div>'
@@ -363,7 +363,7 @@ for k, L in LOCATIONS.items():
     city = f'{L["city"]}, {L["region"]}'
     PAGES.append(render(k, f'SBN Auto Styling {L["name"]} | Window Tint, Ceramic Coating & PPF in {city}',
                         f'Ceramic window tint, ceramic coating and paint protection film at SBN Auto Styling in {city}.'
-                        + (f' {L["street"]}. Call {L["phone"]}.' if L["street"] else (" Now open." if L["status"] == "open" else f' Opening {L.get("opening") or "soon"}.')),
+                        + (f' {L["street"]}.' + (f' Call {L["phone"]}.' if L["phone"] else ' Book online.') if L["street"] else (" Now open." if L["status"] == "open" else f' Opening {L.get("opening") or "soon"}.')),
                         home_page(k), full_header(True), FULL_FOOTER, auto_modal=True, location=k, head_extra=local_business_ld(k, L)))
 
 # ================================================================ SERVICE PAGES
