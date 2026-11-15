@@ -163,6 +163,13 @@ function orderSummary(o) {
   if (o.service === "ceramic") return { lines: ["Wash, iron decon, clay bar, paint enhancement, ceramic coating", `Sale price (regularly $${PRICES.ceramicWas.toLocaleString()}) · about 8–10 hours`], price: "$" + PRICES.ceramic };
   return { lines: [(o.pkg || "PPF coverage to be decided") + " · free in-person estimate", "20–30 minutes at our shop"], price: "Free" };
 }
+/* Which GoHighLevel calendar to open. Tint with the windshield ("all around") is a longer job, so it can use
+   its own calendar (calendars.tint_full: 3 hr slots, last start 3 PM); otherwise the sides & rear one. */
+function calendarFor(o) {
+  const c = (LOCS[o.loc] || {}).calendars || {};
+  if (o.service === "tint" && o.windshield && c.tint_full) return c.tint_full;
+  return c[o.service] || null;
+}
 function depositFor(svc) { return (PRICES.DEPOSIT || {})[svc] || null; }
 function renderSummary(el) {
   const s = orderSummary(order), v = state.vehicle, L = LOCS[order.loc];
@@ -201,7 +208,7 @@ function showPage(i) {
   pageIdx = Math.max(0, Math.min(i, pages.length - 1));
   const cur = pages[pageIdx], last = pageIdx === pages.length - 1;
   $$(".co-page").forEach(el => el.hidden = el.dataset.page !== cur);
-  const hasCal = order.service !== "ppf" && LOCS[order.loc] && LOCS[order.loc].calendars && LOCS[order.loc].calendars[order.service];
+  const hasCal = order.service !== "ppf" && !!calendarFor(order);
   const total = pages.length + (order.service !== "ppf" ? 1 : 0);  // + the calendar step (steady count while they choose)
   $("#coStepLabel").textContent = `Step ${pageIdx + 1} of ${total} · ${PAGE_TITLES[cur]}`;
   $("#coBar").style.width = ((pageIdx + 1) / (total + 1) * 100) + "%";
@@ -212,7 +219,7 @@ function showPage(i) {
   const dep = depositFor(order.service) ? `A $${depositFor(order.service)} deposit` : "A small deposit";
   $("#coNext").textContent = !last ? "" : order.service === "ppf" ? "Free and no obligation. We'll call you to set a time."
     : hasCal ? `Next: pick a time. ${dep} locks your spot; the rest is due after the job.` : `The shop will call you to confirm a time. ${dep} locks your spot.`;
-  const L = LOCS[order.loc] || LOCS.philadelphia;
+  const L = (LOCS[order.loc] || {}).tel ? LOCS[order.loc] : LOCS.philadelphia;
   const body = encodeURIComponent(`Hi SBN! I'd like a quote for ${SERVICES[order.service].title.toLowerCase()}${state.vehicle ? " on my " + state.vehicle.label : ""}.`);
   $("#coText").href = `sms:${L.tel}?&body=${body}`;
   const m = $(".modal"); if (m) m.scrollTop = 0;
@@ -225,7 +232,7 @@ function validPage(cur) {
     if (!coForm.location.reportValidity() || !state.vehicle) return false;
     if (!offers(order.loc, order.service)) {
       const L = LOCS[order.loc];
-      $("#coSvcErr").textContent = `SBN ${L.name} only does ${L.services.map(x => ({ tint: "window tint", ceramic: "ceramic coating", ppf: "PPF" })[x]).join(", ")} right now. Please pick another location, or call ${L.phone}.`;
+      $("#coSvcErr").textContent = `SBN ${L.name} only does ${L.services.map(x => ({ tint: "window tint", ceramic: "ceramic coating", ppf: "PPF" })[x]).join(", ")} right now. Please pick another location, or call ${L.phone || LOCS.philadelphia.phone}.`;
       $("#coSvcErr").hidden = false;
       return false;
     }
@@ -315,13 +322,13 @@ if (coForm) {
       source: "website checkout", page: location.href,
     };
     sendLead(lead);
-    const L = LOCS[order.loc], cal = L && L.calendars && L.calendars[order.service];
+    const L = LOCS[order.loc], cal = calendarFor(order);
     if (order.service === "ppf" || !cal) {
       $("#doneTitle").textContent = order.service === "ppf" ? "Estimate requested" : "Request received";
       $("#doneText").textContent = order.service === "ppf"
         ? `Thanks ${c.first_name}! We'll call you within 1 business day to set up your free PPF estimate at SBN ${L.name}.`
         : `Thanks ${c.first_name}! SBN ${L.name} will call you within 1 business day to confirm your time.`;
-      $("#doneCall").href = "tel:" + L.tel; $("#doneCall").lastChild.textContent = "Need us sooner? " + L.phone;
+      const P = L.tel ? L : LOCS.philadelphia; $("#doneCall").href = "tel:" + P.tel; $("#doneCall").lastChild.textContent = "Need us sooner? " + P.phone;
       return goStep("done");
     }
     const q = new URLSearchParams({ first_name: c.first_name, email: c.email, phone: c.phone });
@@ -390,7 +397,7 @@ $$(".yr").forEach(el => el.textContent = new Date().getFullYear());
 /* ---------- sticky "Book now" bar (phones): shows after the first screen, texts the visitor's shop ---------- */
 const sticky = $("#stickyBook");
 if (sticky) {
-  const L = LOCS[getLoc()] || LOCS.philadelphia;
+  const L = (LOCS[getLoc()] || {}).tel ? LOCS[getLoc()] : LOCS.philadelphia;
   if (L) $("#stickyText").href = `sms:${L.tel}?&body=${encodeURIComponent("Hi SBN! I'd like a quote for my car.")}`;
   const onS = () => sticky.classList.toggle("show", scrollY > innerHeight * 0.6 && !document.body.classList.contains("modal-open"));
   addEventListener("scroll", onS, { passive: true });
