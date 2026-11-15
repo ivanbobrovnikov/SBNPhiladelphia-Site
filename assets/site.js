@@ -163,13 +163,8 @@ function orderSummary(o) {
   if (o.service === "ceramic") return { lines: ["Wash, iron decon, clay bar, paint enhancement, ceramic coating", `Sale price (regularly $${PRICES.ceramicWas.toLocaleString()}) · about 8–10 hours`], price: "$" + PRICES.ceramic };
   return { lines: [(o.pkg || "PPF coverage to be decided") + " · free in-person estimate", "20–30 minutes at our shop"], price: "Free" };
 }
-/* Which GoHighLevel calendar to open. Tint with the windshield ("all around") is a longer job, so it can use
-   its own calendar (calendars.tint_full: 3 hr slots, last start 3 PM); otherwise the sides & rear one. */
-function calendarFor(o) {
-  const c = (LOCS[o.loc] || {}).calendars || {};
-  if (o.service === "tint" && o.windshield && c.tint_full) return c.tint_full;
-  return c[o.service] || null;
-}
+/* The GoHighLevel calendar for this booking (null = the shop calls to schedule). */
+function calendarFor(o) { return ((LOCS[o.loc] || {}).calendars || {})[o.service] || null; }
 function depositFor(svc) { return (PRICES.DEPOSIT || {})[svc] || null; }
 function renderSummary(el) {
   const s = orderSummary(order), v = state.vehicle, L = LOCS[order.loc];
@@ -334,6 +329,7 @@ if (coForm) {
     const q = new URLSearchParams({ first_name: c.first_name, email: c.email, phone: c.phone });
     $("#bookTitle").textContent = "Pick a time";
     renderSummary($("#bookSummary"));
+    $("#bookNote").hidden = !(order.service === "tint" && order.windshield);
     frame.src = cal + (cal.includes("?") ? "&" : "?") + q;
     goStep("book");
   });
