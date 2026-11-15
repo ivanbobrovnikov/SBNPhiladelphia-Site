@@ -27,6 +27,7 @@ const PRICES = window.SBN_PRICES = {
   LARGE_EXTRA: 60,
   windshield: { standard: 195, premium: 225, nano: 250 },  // add-on, per film
   ceramic: 499, ceramicWas: 1295,  // ceramic coating sale price / regular price
+  DEPOSIT: null,  // deposit you take in GoHighLevel, e.g. 50. null = the site just says "a small deposit"
 };
 // Fallback for the PPF estimate form if no webhook is set: opens an email.
 const LEAD_EMAIL = "hello@sbnautostyling.com";
@@ -180,26 +181,73 @@ function updateWsLabel() { const el = $("#coWsPrice"); if (el && order) el.textC
 /* Vehicle size is never chosen by the customer: it comes from the year/make/model they picked. */
 function applySize() {
   order.size = state.vehicle && state.vehicle.size === "large" ? "large" : "std";
-  const form = $("#checkoutForm");
-  [...form.film.options].forEach(o => o.textContent = `${FILMS[o.value].name} · ${FILMS[o.value].irTxt || FILMS[o.value].ir + "%"} IR · ${tintPrice(o.value, order.size)}`);
-  $("#coSize").textContent = !state.vehicle ? "" : order.size === "large" ? `(priced as large SUV / truck, +$${PRICES.LARGE_EXTRA})` : "(priced as car / small SUV)";
+  renderFilms();
+  $("#coSize").textContent = !state.vehicle ? `Prices for cars & small SUVs; large SUVs & trucks +$${PRICES.LARGE_EXTRA}.`
+    : order.size === "large" ? `Priced as a large SUV / truck (+$${PRICES.LARGE_EXTRA}).` : "Priced as a car / small SUV.";
 }
+/* Film choice as three big tappable cards (the hidden <select name="film"> keeps the value). */
+function renderFilms() {
+  const box = $("#coFilms"); if (!box) return;
+  box.innerHTML = Object.entries(FILMS).map(([k, f]) => `<button type="button" class="co-film${k === order.film ? " active" : ""}" data-film-pick="${k}">
+    <b>${f.name}</b><small>${f.irTxt || f.ir + "%"} heat rejection · ${f.warranty}</small><span>${tintPrice(k, order.size)}</span></button>`).join("");
+}
+
+/* ---- the wizard: car → package (tint only) → you. Pages already answered are skipped. ---- */
+let pages = [], pageIdx = 0;
+const PAGE_TITLES = { car: "Your car", pkg: "Your tint", you: "Your details" };
+function needsCar() { return !state.vehicle || !order.loc || !offers(order.loc, order.service); }
+function showPage(i) {
+  pageIdx = Math.max(0, Math.min(i, pages.length - 1));
+  const cur = pages[pageIdx], last = pageIdx === pages.length - 1;
+  $$(".co-page").forEach(el => el.hidden = el.dataset.page !== cur);
+  const hasCal = order.service !== "ppf" && LOCS[order.loc] && LOCS[order.loc].calendars && LOCS[order.loc].calendars[order.service];
+  const total = pages.length + (order.service !== "ppf" ? 1 : 0);  // + the calendar step (steady count while they choose)
+  $("#coStepLabel").textContent = `Step ${pageIdx + 1} of ${total} · ${PAGE_TITLES[cur]}`;
+  $("#coBar").style.width = ((pageIdx + 1) / (total + 1) * 100) + "%";
+  const arrow = ' <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg>';
+  $("#coSubmit").innerHTML = !last ? "Next" + arrow
+    : order.service === "ppf" ? "Request my free estimate" + arrow
+    : hasCal ? "Pick my time" + arrow : "Request my appointment" + arrow;
+  const dep = PRICES.DEPOSIT ? `$${PRICES.DEPOSIT} deposit` : "A small deposit";
+  $("#coNext").textContent = !last ? "" : order.service === "ppf" ? "Free and no obligation. We'll call you to set a time."
+    : hasCal ? `Next: pick a time. ${dep} locks your spot; the rest is due after the job.` : `The shop will call you to confirm a time. ${dep} locks your spot.`;
+  const L = LOCS[order.loc] || LOCS.philadelphia;
+  const body = encodeURIComponent(`Hi SBN! I'd like a quote for ${SERVICES[order.service].title.toLowerCase()}${state.vehicle ? " on my " + state.vehicle.label : ""}.`);
+  $("#coText").href = `sms:${L.tel}?&body=${body}`;
+  const m = $(".modal"); if (m) m.scrollTop = 0;
+  const first = $(`.co-page[data-page="${cur}"] input:not([type=checkbox]), .co-page[data-page="${cur}"] select`);
+  if (first && cur === "you" && matchMedia("(min-width: 700px)").matches) setTimeout(() => first.focus(), 50);
+}
+function validPage(cur) {
+  if (cur === "car") {
+    $("#coVehErr").hidden = !!state.vehicle;
+    if (!coForm.location.reportValidity() || !state.vehicle) return false;
+    if (!offers(order.loc, order.service)) {
+      const L = LOCS[order.loc];
+      $("#coSvcErr").textContent = `SBN ${L.name} only does ${L.services.map(x => ({ tint: "window tint", ceramic: "ceramic coating", ppf: "PPF" })[x]).join(", ")} right now. Please pick another location, or call ${L.phone}.`;
+      $("#coSvcErr").hidden = false;
+      return false;
+    }
+    return true;
+  }
+  if (cur === "you") return [...$$('.co-page[data-page="you"] input')].every(i => i.reportValidity());
+  return true;
+}
+
 function checkout(o) {
   order = { film: "premium", front: 70, rear: 20, loc: getLoc(), ...o };
-  const locSel = $("#checkoutForm").location;
+  const locSel = coForm.location;
   locSel.innerHTML = `<option value="">Choose a location…</option>` + Object.entries(LOCS).map(([k, L]) => `<option value="${k}"${offers(k, order.service) ? "" : " disabled"}>${L.name}${L.status === "open" ? "" : ` (opening ${L.opening || "soon"})`}${offers(k, order.service) ? "" : " – window tint only"}</option>`).join("");
   if (!offers(order.loc, order.service)) order.loc = "";
   $("#coSvcErr").hidden = true;
   locSel.value = order.loc; $("#coLocField").hidden = !!PAGE_LOC && !!order.loc;
   if (!FILMS[order.film]) order.film = "premium";
-  const form = $("#checkoutForm");
   $("#coTitle").textContent = SERVICES[order.service].title;
-  $("#coNext").textContent = SERVICES[order.service].next;
-  $("#coSubmit").innerHTML = (order.service === "ppf" ? "Request my free estimate" : "Continue to calendar & deposit") + ' <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg>';
-  $("#coTint").hidden = order.service !== "tint";
-  form.film.innerHTML = Object.keys(FILMS).map(k => `<option value="${k}"></option>`).join("");
-  form.film.value = order.film; form.front.value = order.front; form.rear.value = order.rear;
-  form.windshield.checked = !!order.windshield; updateWsLabel();
+  coForm.film.innerHTML = Object.keys(FILMS).map(k => `<option value="${k}"></option>`).join("");
+  coForm.film.value = order.film; coForm.front.value = order.front; coForm.rear.value = order.rear;
+  coForm.windshield.checked = !!order.windshield; updateWsLabel();
+  // returning visitors: remember their contact details on this device
+  try { const me = JSON.parse(localStorage.getItem("sbn_me") || "{}"); ["first_name", "phone", "email"].forEach(k => { if (me[k] && !coForm[k].value) coForm[k].value = me[k]; }); } catch (e) {}
   applySize();
   updateLegal();
   if (window.SBNVehicles) SBNVehicles.mount($("#coVehicle"), v => {
@@ -208,36 +256,49 @@ function checkout(o) {
     renderSummary($("#coSummary"));
   }, state.vehicle || {});
   renderSummary($("#coSummary"));
+  // skip what we already know: car + location from the tool/picker, tint choices from the visualizer
+  pages = [];
+  if (needsCar()) pages.push("car");
+  if (order.service === "tint" && !order.fromStudio) pages.push("pkg");
+  pages.push("you");
   openModal("checkout");
+  showPage(0);
 }
 const coForm = $("#checkoutForm");
 if (coForm) {
+  $("#coBack").addEventListener("click", () => {
+    if (pageIdx > 0) return showPage(pageIdx - 1);
+    if (!pages.includes("car")) { pages.unshift("car"); if (order.service === "tint" && !pages.includes("pkg")) pages.splice(1, 0, "pkg"); return showPage(0); }
+    goStep("pick");
+  });
+  $("#coFilms").addEventListener("click", e => {
+    const b = e.target.closest("[data-film-pick]"); if (!b) return;
+    order.film = coForm.film.value = b.dataset.filmPick;
+    updateWsLabel(); renderFilms(); renderSummary($("#coSummary"));
+  });
   coForm.addEventListener("change", e => {
     const k = e.target.name;
     if (k === "windshield") { order.windshield = e.target.checked; return renderSummary($("#coSummary")); }
-    if (k === "location") { order.loc = e.target.value; if (order.loc) setLoc(order.loc); updateLegal(); return renderSummary($("#coSummary")); }
-    if (!["film", "front", "rear"].includes(k)) return;
-    order[k] = k === "film" ? e.target.value : +e.target.value;
-    if (k === "film") updateWsLabel();
+    if (k === "location") { order.loc = e.target.value; if (order.loc) setLoc(order.loc); $("#coSvcErr").hidden = true; updateLegal(); return renderSummary($("#coSummary")); }
+    if (!["front", "rear"].includes(k)) return;
+    order[k] = +e.target.value;
     updateLegal();
     renderSummary($("#coSummary"));
   });
   coForm.addEventListener("submit", e => {
     e.preventDefault();
+    const cur = pages[pageIdx];
+    if (!validPage(cur)) return;
+    if (pageIdx < pages.length - 1) return showPage(pageIdx + 1);
+    // final page: make sure the earlier answers are complete too
+    if (!state.vehicle || !order.loc || !offers(order.loc, order.service)) { pages = ["car", ...pages.filter(p => p !== "car")]; showPage(0); validPage("car"); return; }
     const v = state.vehicle;
-    $("#coVehErr").hidden = !!v;
-    if (!v || !coForm.reportValidity()) return;
-    if (!offers(order.loc, order.service)) {
-      const L = LOCS[order.loc];
-      $("#coSvcErr").textContent = `SBN ${L.name} only does ${L.services.map(x => ({ tint: "window tint", ceramic: "ceramic coating", ppf: "PPF" })[x]).join(", ")} right now. Please pick another location, or call ${L.phone}.`;
-      $("#coSvcErr").hidden = false; $("#coSvcErr").scrollIntoView({ block: "center" });
-      return;
-    }
     try { sessionStorage.setItem("sbn_vehicle", JSON.stringify(v)); } catch (err) {}
     const c = Object.fromEntries(new FormData(coForm));
+    try { localStorage.setItem("sbn_me", JSON.stringify({ first_name: c.first_name, phone: c.phone, email: c.email })); } catch (err) {}
     const s = orderSummary(order);
     const lead = {
-      first_name: c.first_name, last_name: c.last_name, phone: c.phone, email: c.email,
+      first_name: c.first_name, phone: c.phone, email: c.email,
       vehicle: v.label, vehicle_year: v.year, vehicle_make: v.make, vehicle_model: v.model,
       service: SERVICES[order.service].title, price: s.price,
       package: order.service === "tint" ? FILMS[order.film].name : order.service === "ppf" ? (order.pkg || "") : "Ceramic Coating",
@@ -248,7 +309,7 @@ if (coForm) {
       tint_rear: order.service === "tint" ? order.rear + "%" : "",
       tint_rear_install: order.service === "tint" ? s.rearInstalled + "%" : "",
       location: LOCS[order.loc] ? LOCS[order.loc].name : "",
-      notes: c.notes || "", sms_consent: c.consent ? "yes" : "no",
+      sms_consent: c.consent ? "yes" : "no",
       summary: [SERVICES[order.service].title, ...s.lines, "Vehicle: " + v.label, s.price].join(" | "),
       source: "website checkout", page: location.href,
     };
@@ -257,13 +318,13 @@ if (coForm) {
     if (order.service === "ppf" || !cal) {
       $("#doneTitle").textContent = order.service === "ppf" ? "Estimate requested" : "Request received";
       $("#doneText").textContent = order.service === "ppf"
-        ? `We'll call you within 1 business day to set up your free in-person PPF estimate at SBN ${L.name}.`
-        : `SBN ${L.name} will call you within 1 business day to confirm your time and take the deposit.`;
+        ? `Thanks ${c.first_name}! We'll call you within 1 business day to set up your free PPF estimate at SBN ${L.name}.`
+        : `Thanks ${c.first_name}! SBN ${L.name} will call you within 1 business day to confirm your time.`;
       $("#doneCall").href = "tel:" + L.tel; $("#doneCall").lastChild.textContent = "Need us sooner? " + L.phone;
       return goStep("done");
     }
-    const q = new URLSearchParams({ first_name: c.first_name, last_name: c.last_name, email: c.email, phone: c.phone });
-    $("#bookTitle").textContent = "Pick a time & pay deposit";
+    const q = new URLSearchParams({ first_name: c.first_name, email: c.email, phone: c.phone });
+    $("#bookTitle").textContent = "Pick a time";
     renderSummary($("#bookSummary"));
     frame.src = cal + (cal.includes("?") ? "&" : "?") + q;
     goStep("book");
@@ -320,3 +381,14 @@ if (form) form.addEventListener("submit", async e => {
 /* ---------- chat bubble placeholder ---------- */
 const chatX = $("#chatPopX"); if (chatX) chatX.addEventListener("click", () => $("#chatPop").remove());
 $$(".yr").forEach(el => el.textContent = new Date().getFullYear());
+
+/* ---------- sticky "Book now" bar (phones): shows after the first screen, texts the visitor's shop ---------- */
+const sticky = $("#stickyBook");
+if (sticky) {
+  const L = LOCS[getLoc()] || LOCS.philadelphia;
+  if (L) $("#stickyText").href = `sms:${L.tel}?&body=${encodeURIComponent("Hi SBN! I'd like a quote for my car.")}`;
+  const onS = () => sticky.classList.toggle("show", scrollY > innerHeight * 0.6 && !document.body.classList.contains("modal-open"));
+  addEventListener("scroll", onS, { passive: true });
+  new MutationObserver(onS).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+  onS();
+}

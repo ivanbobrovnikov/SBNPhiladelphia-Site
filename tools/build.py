@@ -211,6 +211,10 @@ def render(path, title, desc, body, header, footer, auto_modal=False, location="
 </main>
 {footer}
 {fix_paths(MODAL)}
+<div class="sticky-book" id="stickyBook" aria-hidden="true">
+  <button class="btn btn-primary" data-open-modal>Book now <small>· tint from $199</small></button>
+  <a class="sticky-text" id="stickyText" href="sms:+12672637342" aria-label="Text us">{ic("i-chat", 20)}</a>
+</div>
 {CHAT}
 <script src="{{R}}assets/vehicles.js"></script>
 <script src="{{R}}assets/site.js"></script>
@@ -310,8 +314,27 @@ def strip_services(T, services):
     return T
 
 
+BRAND_MEDIA = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "locations.json"))).get("_brand_media", {})
+
+
+def apply_media(T, media):
+    """Swap in the shop's own hero video/photo and gallery when they're set in locations.json."""
+    media = media or {}
+    vid, img = media.get("hero_video"), media.get("hero_image")
+    if vid:
+        poster = f' poster="{{R}}assets/{img}"' if img else ""
+        T = T.replace('<div class="hero-bg" id="heroBg"></div>',
+                      f'<div class="hero-bg has-media" id="heroBg"><video autoplay muted loop playsinline preload="metadata"{poster}><source src="{{R}}assets/{vid}" type="video/mp4"/></video></div>')
+    elif img:
+        T = T.replace('<div class="hero-bg" id="heroBg"></div>', f'<div class="hero-bg" id="heroBg" style="background-image:url(\'{{R}}assets/{img}\')"></div>')
+    if media.get("gallery"):
+        shots = "".join(f'<div class="shot"><img src="{{R}}assets/{src}" alt="{e(cap)}" loading="lazy"/><span>{e(cap)}</span></div>' for src, cap in media["gallery"])
+        T = re.sub(r'(<div class="strip" id="strip">).*?(\n    </div>\n  </div>\n</section>)', lambda m: m.group(1) + shots + m.group(2), T, count=1, flags=re.S)
+    return T
+
+
 def home_page(k=None):
-    T = read("home.html")
+    T = apply_media(read("home.html"), LOCATIONS[k].get("media") if k else BRAND_MEDIA)
     services = LOCATIONS[k].get("services", list(SVC_NAMES)) if k else list(SVC_NAMES)
     T = strip_services(T, services).replace("{STUDIO_TOOLS}", ",".join(services))
     if k is None:

@@ -1,5 +1,5 @@
 {
-  "_help": "One entry per location; the key is the page address (e.g. /sunrise-fl/). Fill in street/city/zip/phone/hours as you get them, then run: python3 tools/build.py. null = not known yet (the page says 'call for directions' for open shops, or 'opening <opening>' for upcoming ones). status: open or soon. law: PA, NJ or FL (tint rules in the visualizer and checkout). calendars: GoHighLevel booking links; null = the shop calls the customer to schedule instead. services: which of tint, ceramic, ppf the shop offers (the page and booking only show those).",
+  "_help": "One entry per location; the key is the page address (e.g. /sunrise-fl/). Fill in street/city/zip/phone/hours as you get them, then run: python3 tools/build.py. null = not known yet (the page says 'call for directions' for open shops, or 'opening <opening>' for upcoming ones). status: open or soon. law: PA, NJ or FL (tint rules in the visualizer and checkout). calendars: GoHighLevel booking links; null = the shop calls the customer to schedule instead. services: which of tint, ceramic, ppf the shop offers (the page and booking only show those). media: your own photos/videos, as paths under assets/media/ (e.g. \"media/sunrise-fl/hero.mp4\"). hero_video plays muted on loop behind the headline (keep it under ~5 MB); hero_image is its still/poster; gallery is a list of [photo, caption]. Leave empty to keep the default images.",
   "philadelphia": {
     "status": "open",
     "name": "Northeast Philadelphia",
@@ -46,7 +46,12 @@
       "tint",
       "ceramic",
       "ppf"
-    ]
+    ],
+    "media": {
+      "hero_video": null,
+      "hero_image": null,
+      "gallery": []
+    }
   },
   "west-berlin-nj": {
     "status": "open",
@@ -72,7 +77,12 @@
       "tint",
       "ceramic",
       "ppf"
-    ]
+    ],
+    "media": {
+      "hero_video": null,
+      "hero_image": null,
+      "gallery": []
+    }
   },
   "sunrise-fl": {
     "status": "open",
@@ -96,7 +106,12 @@
     },
     "services": [
       "tint"
-    ]
+    ],
+    "media": {
+      "hero_video": null,
+      "hero_image": null,
+      "gallery": []
+    }
   },
   "west-palm-beach-fl": {
     "status": "soon",
@@ -123,6 +138,16 @@
       "tint",
       "ceramic",
       "ppf"
-    ]
+    ],
+    "media": {
+      "hero_video": null,
+      "hero_image": null,
+      "gallery": []
+    }
+  },
+  "_brand_media": {
+    "hero_video": null,
+    "hero_image": null,
+    "gallery": []
   }
 }

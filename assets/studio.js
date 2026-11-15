@@ -104,7 +104,7 @@
     vehicleBlock(root, style => {
       if (style && style !== s.type) { s.type = style; drawCar(); } else update();
     });
-    $('[data-o="book"]').addEventListener("click", () => checkout({ service: "tint", film: s.film, front: s.front, rear: s.rear, windshield: s.ws === "yes" }));
+    $('[data-o="book"]').addEventListener("click", () => checkout({ service: "tint", film: s.film, front: s.front, rear: s.rear, windshield: s.ws === "yes", fromStudio: true }));
     drawCar();
   }
 

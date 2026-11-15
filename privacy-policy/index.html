@@ -229,35 +229,47 @@
         </div>
       </div>
 
-      <!-- step: checkout (vehicle, service details, contact) -->
+      <!-- step: checkout — a short wizard: 1 car, 2 package (tint only), 3 contact. Pages already answered are skipped. -->
       <div class="m-step" data-step="checkout">
-        <div class="m-head"><button class="m-back" data-go="pick" aria-label="Back"><svg width="14" height="14"><use href="#i-chevl"/></svg></button><div><div class="m-kicker">Checkout · Step 1 of 2</div><div class="m-title" id="coTitle">Your appointment</div></div></div>
+        <div class="m-head"><button class="m-back" type="button" id="coBack" aria-label="Back"><svg width="14" height="14"><use href="#i-chevl"/></svg></button><div><div class="m-kicker" id="coStepLabel">Step 1 of 3</div><div class="m-title" id="coTitle">Your appointment</div></div></div>
+        <div class="co-progress"><i id="coBar"></i></div>
         <form id="checkoutForm" class="co" novalidate>
           <div class="co-sum" id="coSummary"></div>
-          <div class="field" id="coLocField"><label>Location <span>*</span></label><select name="location" required></select></div>
-          <p class="co-err" id="coSvcErr" hidden></p>
-          <div class="field"><label>Your vehicle <span>*</span></label><div id="coVehicle"></div><p class="co-err" id="coVehErr" hidden>Pick your year, make and model.</p></div>
-          <div class="co-tint" id="coTint" hidden>
-            <div class="field"><label>Film <em id="coSize"></em></label><select name="film"></select></div>
-            <label class="consent co-ws"><input type="checkbox" name="windshield"/> <span>Add windshield <b id="coWsPrice">+$225</b></span></label>
+
+          <div class="co-page" data-page="car">
+            <h4 class="co-q">What are we working on?</h4>
+            <div class="field" id="coLocField"><label>Location <span>*</span></label><select name="location" required></select></div>
+            <p class="co-err" id="coSvcErr" hidden></p>
+            <div class="field"><label>Your vehicle <span>*</span></label><div id="coVehicle"></div><p class="co-err" id="coVehErr" hidden>Pick your year, make and model.</p></div>
+          </div>
+
+          <div class="co-page co-tint" data-page="pkg" id="coTint">
+            <h4 class="co-q">Pick your tint</h4>
+            <div class="co-films" id="coFilms"></div>
+            <select name="film" hidden></select>
             <div class="frow">
-              <div class="field"><label>Front windows</label><select name="front"><option value="70">70% (PA legal)</option><option value="50">50%</option><option value="35">35%</option><option value="20">20%</option><option value="15">15%</option><option value="5">5%</option></select></div>
+              <div class="field"><label>Front windows</label><select name="front"><option value="70">70%</option><option value="50">50%</option><option value="35">35%</option><option value="20">20%</option><option value="15">15%</option><option value="5">5%</option></select></div>
               <div class="field"><label>Rear windows</label><select name="rear"><option value="70">70%</option><option value="50">50%</option><option value="35">35%</option><option value="20" selected>20%</option><option value="15">15%</option><option value="5">5%</option></select></div>
             </div>
+            <label class="consent co-ws"><input type="checkbox" name="windshield"/> <span>Add windshield <b id="coWsPrice">+$225</b></span></label>
+            <p class="note-sm"><span id="coSize"></span></p>
           </div>
-          <div class="frow">
-            <div class="field"><label>First name <span>*</span></label><input name="first_name" required autocomplete="given-name"/></div>
-            <div class="field"><label>Last name <span>*</span></label><input name="last_name" required autocomplete="family-name"/></div>
+
+          <div class="co-page" data-page="you">
+            <h4 class="co-q">Where do we send your confirmation?</h4>
+            <div class="field"><label>First name <span>*</span></label><input name="first_name" required autocomplete="given-name" placeholder="Your first name"/></div>
+            <div class="frow">
+              <div class="field"><label>Mobile <span>*</span></label><input name="phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="(267) 555-0100"/></div>
+              <div class="field"><label>Email <span>*</span></label><input name="email" type="email" required autocomplete="email" inputmode="email" placeholder="you@email.com"/></div>
+            </div>
+            <label class="consent"><input type="checkbox" name="consent" required/> <span>Text and call me about my appointment. Msg &amp; data rates may apply. Reply STOP to opt out. <a href="../privacy-policy/" target="_blank">Privacy</a></span></label>
+            <p class="note-sm" id="coLegal" hidden></p>
+            <div class="co-proof"><span class="stars"><svg width="14" height="14"><use href="#i-star"/></svg><svg width="14" height="14"><use href="#i-star"/></svg><svg width="14" height="14"><use href="#i-star"/></svg><svg width="14" height="14"><use href="#i-star"/></svg><svg width="14" height="14"><use href="#i-star"/></svg></span> <b>5.0</b> from 200+ Google reviews</div>
           </div>
-          <div class="frow">
-            <div class="field"><label>Phone <span>*</span></label><input name="phone" type="tel" required autocomplete="tel" placeholder="(267) 555-0100"/></div>
-            <div class="field"><label>Email <span>*</span></label><input name="email" type="email" required autocomplete="email" placeholder="you@email.com"/></div>
-          </div>
-          <div class="field"><label>Notes <em>(optional)</em></label><textarea name="notes" rows="2" placeholder="Anything we should know about your car?"></textarea></div>
-          <label class="consent"><input type="checkbox" name="consent" required/> <span>I agree to receive calls and texts from SBN Auto Styling about my appointment. Msg &amp; data rates may apply. Reply STOP to opt out. See our <a href="../privacy-policy/" target="_blank">Privacy Policy</a>.</span></label>
-          <p class="note-sm" id="coLegal" hidden>Front side windows are installed at 70% to meet Pennsylvania inspection rules.</p>
-          <button type="submit" class="btn btn-primary" id="coSubmit">Continue <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
-          <p class="note-sm" id="coNext"></p>
+
+          <button type="submit" class="btn btn-primary btn-lg" id="coSubmit">Continue <svg class="arrow" width="16" height="16"><use href="#i-arrow"/></svg></button>
+          <p class="note-sm co-next" id="coNext"></p>
+          <p class="co-alt">Hate forms? <a id="coText" href="sms:+12672637342">Text us your car</a> and we'll quote you.</p>
         </form>
       </div>
 
@@ -284,6 +296,10 @@
 </div>
 
 
+<div class="sticky-book" id="stickyBook" aria-hidden="true">
+  <button class="btn btn-primary" data-open-modal>Book now <small>· tint from $199</small></button>
+  <a class="sticky-text" id="stickyText" href="sms:+12672637342" aria-label="Text us"><svg width="20" height="20"><use href="#i-chat"/></svg></a>
+</div>
 <!-- ===================== CHAT BUBBLE ===================== -->
 <!-- The live site uses the LeadConnector chat widget. Paste your widget snippet here
      and delete the two placeholder elements below. -->
